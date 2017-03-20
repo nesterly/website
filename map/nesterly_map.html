@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaflet Map</title>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<style>
+		#controls {
+	    	float: left;
+			position: relative;
+		}
+
+		.leaflet-map-pane {
+			z-index: 2 !important;
+		}
+
+		.leaflet-google-layer {
+			z-index: 1 !important;
+		}
+	</style>
+</head>
+<body>
+	<!-- Our web map and content will go here -->
+	<div id="map" style="width: 100%; height: 800px"></div>
+	<div id="controls" style="margin: 15px;">
+		<button id="addButton">Show Listings</button>
+		<button id="removeButton">Hide Listings</button>
+	</div>
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+	<script src="http://maps.google.com/maps/api/js?v=3&key=AIzaSyANWC7K6-1vqxjUWt-8HOPjM-SJp7aH4u0"></script>
+	<script src="http://matchingnotes.com/javascripts/leaflet-google.js"></script>
+	<script>
+    	// Web map code goes here
+    	var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14 });
+
+    	// Add Tile Layer
+		L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png').addTo(map);
+
+    	// // Add google map tiles
+    	// var googleLayer = new L.Google('ROADMAP');
+     //  	map.addLayer(googleLayer);
+
+      	// Add custom home icon
+      	var home_icon = L.icon({
+		    iconUrl: 'home-icon.png',
+		    shadowUrl: 'home-shadow.png',
+
+		    iconSize:     [40, 40], // size of the icon
+		    shadowSize:   [66, 34], // size of the shadow
+		    iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
+		    shadowAnchor: [19, 14],  // the same for the shadow
+		    popupAnchor:  [0, -20] // point from which the popup should open relative to the iconAnchor
+		});
+
+		// Null variable that will hold our data
+		var coffeeShopPoints = null;
+
+
+		// Add homes to map
+		$.getJSON("data/coffee_cafes.geojson",function(data){
+
+			coffeeShopPoints = L.geoJson(data,{
+				pointToLayer: function (feature, latlng) {
+			        return L.marker(latlng, {icon: home_icon});
+			    },
+			    onEachFeature: function (feature, layer) {
+					var popupContent = feature.properties.NUMERO;
+					layer.bindPopup(feature.properties.name);
+			    }
+			}).addTo(map);
+		});
+
+
+			// coffeeShopPoints = L.geoJson(data,{
+			// 	onEachFeature: function (feature, layer, latlng) {
+			// 		layer.bindPopup(feature.properties.name);				
+			// 	}
+			// }).addTo(map);
+
+		// Function to remove coffee shops
+		function removeCoffeeShops(){
+			map.removeLayer(coffeeShopPoints);
+		};
+
+		// Function to toggle coffee shops
+		function toggleCoffeeShops(){
+			if(map.hasLayer(coffeeShopPoints)){
+				removeCoffeeShops();
+			} else {
+				addCoffeeShops();
+			}
+		};
+
+		// Use $( "elementID") and the jQuery click listener method to add on the add button
+		$( "#addButton" ).click(function() {
+			addCoffeeShops();
+		});
+
+		// Use $( "elementID") and the jQuery click listener method to remove on the remove button
+		$( "#removeButton" ).click(function() {
+			removeCoffeeShops();
+		});
+
+	</script>
+</body>
+</html>
