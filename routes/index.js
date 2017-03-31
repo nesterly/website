@@ -1,19 +1,22 @@
 var express = require('express');
 var router = express.Router();
 
-var env = process.env.NODE_ENV || 'development';
-var config = require('../config')[env];
+var config;
+if (process.env.NODE_ENV) {
+	config = process.env.config;
+} else {
+	config = require('../config')['development'];
+}
 
 var firebase = require("firebase");
-
-var config = {
+var firebaseConfig = {
   apiKey: config.firebase.apiKey,
   authDomain: config.firebase.authDomain,
   databaseURL: config.firebase.databaseURL,
   storageBucket: config.firebase.storageBucket,
   messagingSenderId: config.firebase.messagingSenderId
 };
-firebase.initializeApp(config);
+firebase.initializeApp(firebaseConfig);
 
 var database = firebase.database();
 
