@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<title>
+		Nesterly | Create Listing
+	</title>
+
+	<style>
+		body {
+			font-family: "Lucida Grande";
+		}
+		h1 {
+		  font-size: 2.5vw;
+		  color: white;
+		  text-align: center;
+		}
+		form {
+			margin: auto;
+		  text-align: left;
+		}
+		.form-header {
+			width: 100%;
+			background-color: #95a5a6;
+		}
+		.form-title {
+		  width: 28%;
+		  padding-left: 1%;
+		  display: inline-block;
+		  background-color: #3498db;
+		  color: white;
+		}
+		textarea, #title-input, #address-input, #image-url-input {
+			width: 70%;
+			vertical-align: top;
+		}
+		#submit-button {
+			margin: auto;
+			text-align: center;
+			width: 200px;
+			height: 40px;
+			font-size: 30px;
+			color: #3498db;
+			border-style: solid;
+			border-width: 2px;
+			border-color: #3498db;
+			border-radius: 10px;
+			cursor: pointer;
+		}
+		#submit-button:hover {
+			color: white;
+			background-color: #3498db; 			
+		}
+	</style>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+</head>
+<body>
+	
+	<form id="add-listing-form" method="post" action="/add_listing">
+
+	<div class="form-header"><h1>About</h1></div>
+
+    <div class="form-title">Title: </div>
+    <input id="title-input" type="text" name="title" placeholder="Enter a title.">
+    <br><br>
+
+    <div class="form-title">Brief Description: </div>
+    <textarea id="desc-short-input" form="add-listing-form" name="desc_short" placeholder="Enter a brief description."></textarea>
+    <br><br>
+
+    <div class="form-title">General Description: </div>
+    <textarea id="desc-long-input" form="add-listing-form" name="desc_long" placeholder="Enter a detailed description."></textarea>
+    <br><br>
+
+    <div class="form-title" id="bldg-type-input">Building Type: </div>
+    <input type="radio" name="bldg_type" value="home" checked> Home
+  	<input type="radio" name="bldg_type" value="apartment"> Apartment
+  	<input type="radio" name="bldg_type" value="other"> Other: 
+  	<input id="bldg-type-other" type="text" name="bldg_type_other" placeholder="Explain">
+  	<br>
+
+    <div class="form-header"><h1>Location</h1></div>
+
+    <div class="form-title">Address: </div>
+    <input id="address-input" type="text" name="address" placeholder="Enter an address.">
+    <br><br>     
+
+    <div class="form-title">Latitude: </div>
+    <input id="lat-input" type="number" name="lat" value="0">
+    <span> degree(s) N</span>
+    <br><br>
+
+    <div class="form-title">Longitude: </div>
+    <input id="long-input" type="number" name="long" value="0">
+    <span> degree(s) W</span>
+    <br><br>
+
+    <div class="form-title">Neighborhood Description: </div>
+    <textarea id="desc-locale-input" form="add-listing-form" name="desc_locale" placeholder="Enter a description of neighborhood."></textarea>
+    <br><br>   
+
+    <div class="form-title">Walking from MIT: </div>
+    <input id="walk-input" type="number" name="walk" value="0">
+    <span> minute(s)</span>
+    <br><br>
+
+    <div class="form-title">Biking from MIT: </div>
+    <input id="bike-input" type="number" name="bike" value="0">
+    <span> minute(s)</span>
+    <br><br>
+
+    <div class="form-title">Driving from MIT: </div>
+    <input id="drive-input" type="number" name="drive" value="0">
+    <span> minute(s)</span>
+    <br><br>
+
+    <div class="form-title">Public Transit from MIT: </div>
+    <input id="transit-input" type="number" name="transit" value="0">
+    <span> minute(s)</span>
+    <br>
+
+	<div class="form-header"><h1>Room</h1></div>
+
+    <div class="form-title">Room Image URL: </div>
+    <input id="image-url-input" type="text" name="image_url" placeholder="Enter an image URL.">
+    <br><br>     
+
+    <div class="form-title">Room Area: </div>
+    <input id="area-input" type="number" name="area" value="0">
+    <span> sqft.</span>
+    <br>
+
+	<div class="form-header"><h1>Furniture and Amenities</h1></div>
+
+    <div class="form-title" id="bed-input">Bed Type: </div>
+    <input type="radio" name="bed" value="twin" checked> Twin
+  	<input type="radio" name="bed" value="double"> Double
+  	<input type="radio" name="bed" value="queen"> Queen
+  	<input type="radio" name="bed" value="king"> King
+  	<input type="radio" name="bed" value="other"> Other:
+  	<input id="bed-other" type="text" name="bed_other" placeholder="Explain">
+  	<br><br>
+
+    <div class="form-title" id="furniture-input">Bedroom Furniture: </div>
+    <input type="checkbox" name="furniture" value="desk">
+    <span id="furniture-desk" class="furniture-choices">Desk</span>
+    <input type="checkbox" name="furniture" value="dresser">
+    <span id="furniture-dresser" class="furniture-choices">Dresser</span>
+    <input type="checkbox" name="furniture" value="chair">
+    <span id="furniture-chair" class="furniture-choices">Chair</span>
+    <input type="checkbox" name="furniture" value="couch">
+    <span id="furniture-couch" class="furniture-choices">Couch</span>
+    <input type="checkbox" name="furniture" value="other">
+    <span id="furniture-other" class="furniture-choices">Other:</span>
+    <input id="furniture-other-desc" type="text" name="furniture_other" placeholder="Explain">
+    <br><br>  	
+
+    <div class="form-title" id="amenities-input">Amenities: </div>
+    <input type="checkbox" name="amenities" value="tv">
+    <span id="amenities-tv" class="amenities-choices">TV</span>
+    <input type="checkbox" name="amenities" value="wifi">
+    <span id="amenities-wifi" class="amenities-choices">Wifi</span>
+    <input type="checkbox" name="amenities" value="washer_dryer">
+    <span id="amenities-washer-dryer" class="amenities-choices">Washer+Dryer</span>
+    <input type="checkbox" name="amenities" value="storage">
+    <span id="amenities-storage" class="amenities-choices">Storage</span>
+    <input type="checkbox" name="amenities" value="dishwasher">
+    <span id="amenities-dishwasher" class="amenities-choices">Dishwasher</span>
+    <input type="checkbox" name="amenities" value="yard">
+    <span id="amenities-yard" class="amenities-choices">Yard</span>
+    <input type="checkbox" name="amenities" value="deck_patio">
+    <span id="amenities-deck-patio" class="amenities-choices">Deck/Patio</span>
+    <input type="checkbox" name="amenities" value="separate_entrance">
+    <span id="amenities-separate-entrance" class="amenities-choices">Separate Entrance</span>
+    <br>
+    <input type="checkbox" name="amenities" value="workout_equipment" style="margin-left:29.5%">
+    <span id="amenities-workout-equipment" class="amenities-choices">Workout Equipment</span>
+    <input type="checkbox" name="amenities" value="other">
+    <span id="amenities-other" class="amenities-choices">Other:</span>
+    <input id="amenities-other-desc" type="text" name="amenities_other" placeholder="Explain">
+    <br><br>
+
+    <div class="form-title" id="shared-input">Common Spaces: </div>
+    <input type="checkbox" name="shared" value="living_room">
+    <span id="shared-livingroom" class="shared-choices">Living Room</span>
+    <input type="checkbox" name="shared" value="kitchen">
+    <span id="shared-kitchen" class="shared-choices">Kitchen</span>
+    <input type="checkbox" name="shared" value="study">
+    <span id="shared-study" class="shared-choices">Study</span>
+    <input type="checkbox" name="shared" value="other">
+    <span id="shared-other" class="shared-choices">Other:</span>
+    <input id="shared-other-disc" type="text" name="shared_other" placeholder="Explain">
+    <br>
+
+	<div class="form-header"><h1>Bathrooms</h1></div>
+
+	<div class="form-title">Number of Shared Half Baths: </div>
+    <input id="share-halfbath-input" type="number" name="share_half_bath" value="0">
+    <br><br>
+
+    <div class="form-title">Number of Shared Full Baths: </div>
+    <input id="share-fullbath-input" type="number" name="share_full_bath" value="0">
+    <br><br>
+
+    <div class="form-title">Number of Private Half Baths: </div>
+    <input id="priv-halfbath-input" type="number" name="priv_half_bath" value="0">
+    <br><br>
+
+    <div class="form-title">Number of Private Full Baths: </div>
+    <input id="priv-fullbath-input" type="number" name="priv_full_bath" value="0">
+    <br>
+
+	<div class="form-header"><h1>Parking</h1></div>
+
+    <div class="form-title">Number of Street Parking Spots: </div>
+    <input id="park-st-input" type="number" name="park_st" value="0">
+    <br><br>
+
+    <div class="form-title">Number of Off Street Parking Spots: </div>
+    <input id="park-offst-input" type="number" name="park_offst" value="0">
+    <br><br>
+
+    <div class="form-title">Number of Garage Parking Spots: </div>
+    <input id="park-garage-input" type="number" name="park_garage" value="0">
+    <br>
+
+	<div class="form-header"><h1>Stay</h1></div>
+
+    <div class="form-title">House Rules: </div>
+    <textarea id="house-rule-input" form="add-listing-form" name="house_rule" placeholder="Enter house rules."></textarea>
+    <br><br>
+
+    <div class="form-title">Minimum Stay: </div>
+    <input id="stay-min-input" type="number" name="stay_min" value="0">
+    <span> day(s)</span>
+    <br><br>
+
+    <div class="form-title">Maximum Stay: </div>
+    <input id="stay-max-input" type="number" name="stay_max" value="0">
+    <span> day(s)</span>
+    <br><br>
+
+    <div style="width: 100%">
+    	<div id="submit-button">Create</div>
+    </div>
+	</form>
+
+	<script>
+		$(document).ready(function(){
+			$("#submit-button").on('click',function(){
+				$("#add-listing-form").submit();
+			})
+		})
+	</script>
+
+</body>
+</html>
