@@ -1,21 +1,27 @@
 var express = require('express');
 var router = express.Router();
 
-var config;
-if (process.env.NODE_ENV) {
-	config = process.env.config;
-} else {
-	config = require('../config')['development'];
-}
-
 var firebase = require("firebase");
-var firebaseConfig = {
-  apiKey: config.firebase.apiKey,
-  authDomain: config.firebase.authDomain,
-  databaseURL: config.firebase.databaseURL,
-  storageBucket: config.firebase.storageBucket,
-  messagingSenderId: config.firebase.messagingSenderId
-};
+var firebaseConfig;
+if (process.env.NODE_ENV) {
+	var config = process.env;
+	firebaseConfig = {
+	  apiKey: config.firebaseApiKey,
+	  authDomain: config.firebaseAuthDomain,
+	  databaseURL: config.firebaseDatabaseURL,
+	  storageBucket: config.firebaseStorageBucket,
+	  messagingSenderId: config.firebaseMessagingSenderId
+	};
+} else {
+	var config = require('../config')['development'];
+	firebaseConfig = {
+	  apiKey: config.firebase.apiKey,
+	  authDomain: config.firebase.authDomain,
+	  databaseURL: config.firebase.databaseURL,
+	  storageBucket: config.firebase.storageBucket,
+	  messagingSenderId: config.firebase.messagingSenderId
+	};
+}
 firebase.initializeApp(firebaseConfig);
 
 var database = firebase.database();
