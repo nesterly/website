@@ -23,6 +23,7 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/css/bootstrap-slider.css">
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -30,12 +31,12 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
-
+    
     <style>
       body { 
         padding-top: 70px; 
       }
-    </style>
+    </style>s
 
 </head>
 
@@ -232,7 +233,83 @@
 
           <!--Leaflet Map Columns-->
           <div class="col-md-6 right-side">
-            Leaflet map goes here
+            <!-- Our web map and content will go here -->
+			<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+			<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+			<div id="map" style="width: 100%; height: 800px"></div>
+			<script>
+		    	// Web map code goes here
+		    	var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14 });
+
+		    	// Add Tile Layer
+				L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png').addTo(map);
+
+		    	// // Add google map tiles
+		    	// var googleLayer = new L.Google('ROADMAP');
+		     //  	map.addLayer(googleLayer);
+
+		      	// Add custom home icon
+		      	var home_icon = L.icon({
+				    iconUrl: 'map/home-icon.png',
+				    shadowUrl: 'map/home-shadow.png',
+
+				    iconSize:     [40, 40], // size of the icon
+				    shadowSize:   [66, 34], // size of the shadow
+				    iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
+				    shadowAnchor: [19, 14],  // the same for the shadow
+				    popupAnchor:  [0, -20] // point from which the popup should open relative to the iconAnchor
+				});
+
+				// Null variable that will hold our data
+				var coffeeShopPoints = null;
+
+
+				// Add homes to map
+				$.getJSON("data/sample_homes.geojson",function(data){
+
+					coffeeShopPoints = L.geoJson(data,{
+						pointToLayer: function (feature, latlng) {
+					        return L.marker(latlng, {icon: home_icon});
+					    },
+					    onEachFeature: function (feature, layer) {
+							var popupContent = feature.properties.NUMERO;
+							layer.bindPopup(feature.properties.name);
+					    }
+					}).addTo(map);
+				});
+
+
+					// coffeeShopPoints = L.geoJson(data,{
+					// 	onEachFeature: function (feature, layer, latlng) {
+					// 		layer.bindPopup(feature.properties.name);				
+					// 	}
+					// }).addTo(map);
+
+				// Function to remove coffee shops
+				function removeCoffeeShops(){
+					map.removeLayer(coffeeShopPoints);
+				};
+
+				// Function to toggle coffee shops
+				function toggleCoffeeShops(){
+					if(map.hasLayer(coffeeShopPoints)){
+						removeCoffeeShops();
+					} else {
+						addCoffeeShops();
+					}
+				};
+
+				// Use $( "elementID") and the jQuery click listener method to add on the add button
+				$( "#addButton" ).click(function() {
+					addCoffeeShops();
+				});
+
+				// Use $( "elementID") and the jQuery click listener method to remove on the remove button
+				$( "#removeButton" ).click(function() {
+					removeCoffeeShops();
+				});
+
+			</script>
           </div>
 
         </div>

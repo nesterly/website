@@ -1,7 +1,0 @@
-{"type":"FeatureCollection","features":
-	[{"type":"Feature","properties":{"id":1,"name":"Your College Pad"},"geometry":{"type":"Point","coordinates":[-71.10429,42.36159]}},
-	{"type":"Feature","properties":{"id":2,"name":"Funky Chill Houz"},"geometry":{"type":"Point","coordinates":[-71.0812,42.36799]}},
-	{"type":"Feature","properties":{"id":3,"name":"Mi Casa"},"geometry":{"type":"Point","coordinates":[-71.08489,42.3704]}},
-	{"type":"Feature","properties":{"id":4,"name":"Comfortable and Quiet Home"},"geometry":{"type":"Point","coordinates":[-71.08712,42.36692]}},
-	{"type":"Feature","properties":{"id":5,"name":"Your Home Away from Home"},"geometry":{"type":"Point","coordinates":[-71.09691,42.37167]}}
-]}
