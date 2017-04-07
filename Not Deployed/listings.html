@@ -10,7 +10,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Modern Business - Start Bootstrap Template</title>
+    <title>Nesterly</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.css" rel="stylesheet">
@@ -18,21 +18,33 @@
     <!-- Custom CSS -->
     <link href="css/bootstrap-custom.css" rel="stylesheet">
 
-    <!-- Custom Fonts -->
-<!--     <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
-
-<!--     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
-
+    <!-- Slider CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/css/bootstrap-slider.css">
+    <style>
+      #distSlider .slider-selection {
+        background: #BABABA;
+      }
+      #priceSlider .slider-selection {
+        background: #BABABA;
+      }
+      div.tooltip.tooltip-main.top {
+        display: none;
+      }
+    </style>
     
     <!-- Map CSS -->
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css" />
 
+    <!-- JQuery JS Library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <!-- Bootstrap JS Library -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+    <!-- JQuery Plugin for Time/Date -->    
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+
+    <!-- Date Picker CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
     
 </head>
@@ -97,14 +109,14 @@
         <div class="row">
 
           <!-- Side Bar Columns -->
-          <div class="col-md-6 left-side">
+          <div class="col-md-6">
 
             <!--Filters-->
             <div class="container" style="padding: 20px">
               <div class="row">
-                Price <b>$0</b> <input id="price" type="text" class="span2" value="" data-slider-min="0" data-slider-max="4000" data-slider-step="50" data-slider-value="[1000,2000]"/> <b>$4000</b>
+                Price <div style="display:inline;margin-right:10px;font-weight:bold;" id="show_plow">$0</div> <input id="price" type="text" class="span2" value="" data-slider-id='priceSlider'
+                data-slider-min="0" data-slider-max="4000" data-slider-step="50" data-slider-value="[0,4000]"/> <div style="display:inline;margin-left:10px;font-weight:bold;" id="show_phigh">$4000</div>
               </div>
-              <div class="row">
                 Distance from MIT
                 <div class="dropdown" style="display:inline"> 
                   <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -117,162 +129,154 @@
                     <li><a href="#">Driving</a></li>
                   </ul>
                 </div>
-                <input id="distance" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14"/> <b>20 minutes</b>
+                <input id="distance" data-slider-id='distSlider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="20"/> <div style="display:inline;margin-left:10px;font-weight:bold;" id="show_dist">20 min</div>
               </div>
               <div class="row">
                 Move in <input type="text" name="moveindate" value="3/20/2017" /> Move out <input type="text" name="moveoutdate" value="8/1/2017" />
               </div>
             </div>
 
-            <!-- Listings Row -->
-            <div class="row">
-                <div class="col-md-6 img-portfolio">
-                    <a href="">
-                        <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
-                    </a>
-                    <h3>
-                        <a href="">Listing One</a>
-                    </h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
-                </div>
-                <div class="col-md-6 img-portfolio">
-                    <a href="">
-                        <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
-                    </a>
-                    <h3>
-                        <a href="portfolio-item.html">Listing Two</a>
-                    </h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
-                </div>
+            <!-- Listings -->
+            <div class="col-md-6 img-portfolio">
+                <a href="">
+                    <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
+                </a>
+                <h3>
+                    <a href="">Listing One</a>
+                </h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
             </div>
-            <!-- /.row -->
 
-            <!-- Listings Row -->
-            <div class="row">
-                <div class="col-md-6 img-portfolio">
-                    <a href="">
-                        <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
-                    </a>
-                    <h3>
-                        <a href="">Listing Three</a>
-                    </h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
-                </div>
-                <div class="col-md-6 img-portfolio">
-                    <a href="">
-                        <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
-                    </a>
-                    <h3>
-                        <a href="">Listing Four</a>
-                    </h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
-                </div>
+            <div class="col-md-6 img-portfolio">
+                <a href="">
+                    <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
+                </a>
+                <h3>
+                    <a href="portfolio-item.html">Listing Two</a>
+                </h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
             </div>
-            <!-- /.row -->
 
-            <!-- Listings Row -->
-            <div class="row">
-                <div class="col-md-6 img-portfolio">
-                    <a href="">
-                        <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
-                    </a>
-                    <h3>
-                        <a href="">Listing Five</a>
-                    </h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
-                </div>
-                <div class="col-md-6 img-portfolio">
-                    <a href="">
-                        <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
-                    </a>
-                    <h3>
-                        <a href="">Listing Six</a>
-                    </h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
-                </div>
+            <div class="col-md-6 img-portfolio">
+                <a href="">
+                    <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
+                </a>
+                <h3>
+                    <a href="">Listing Three</a>
+                </h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
             </div>
-            <!-- /.row -->
-          </div>
 
-          <!--Leaflet Map Columns-->
-          <div class="col-md-6 right-side">
-            <!-- Our web map and content will go here -->
-			<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-			<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-			<div id="map" style="width: 100%; height: 800px"></div>
-			<script>
-		    	// Web map code goes here
-		    	var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14 });
+            <div class="col-md-6 img-portfolio">
+                <a href="">
+                    <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
+                </a>
+                <h3>
+                    <a href="">Listing Four</a>
+                </h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
+            </div>
 
-		    	// Add Tile Layer
-				L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png').addTo(map);
+            <div class="col-md-6 img-portfolio">
+                <a href="">
+                    <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
+                </a>
+                <h3>
+                    <a href="">Listing Five</a>
+                </h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
+            </div>
 
-		    	// // Add google map tiles
-		    	// var googleLayer = new L.Google('ROADMAP');
-		     //  	map.addLayer(googleLayer);
+            <div class="col-md-6 img-portfolio">
+                <a href="">
+                    <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
+                </a>
+                <h3>
+                    <a href="">Listing Six</a>
+                </h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
+            </div>
+        </div>
 
-		      	// Add custom home icon
-		      	var home_icon = L.icon({
-				    iconUrl: 'map/home-icon.png',
-				    shadowUrl: 'map/home-shadow.png',
+        <!--Leaflet Map Columns-->
+        <div class="col-md-6" style="position:fixed;height:100%;right:0;">
+          <!-- Our web map and content will go here -->
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
+			
+    			<div id="map" style="width:100%;height:100%"></div>
+    			<script>
+    		    	// Web map code goes here
+    		    	var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14 });
 
-				    iconSize:     [40, 40], // size of the icon
-				    shadowSize:   [66, 34], // size of the shadow
-				    iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
-				    shadowAnchor: [19, 14],  // the same for the shadow
-				    popupAnchor:  [0, -20] // point from which the popup should open relative to the iconAnchor
-				});
+    		    	// Add Tile Layer
+    				L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png').addTo(map);
 
-				// Null variable that will hold our data
-				var coffeeShopPoints = null;
+    		    	// // Add google map tiles
+    		    	// var googleLayer = new L.Google('ROADMAP');
+    		     //  	map.addLayer(googleLayer);
 
+    		      	// Add custom home icon
+    		      	var home_icon = L.icon({
+    				    iconUrl: 'map/home-icon.png',
+    				    shadowUrl: 'map/home-shadow.png',
 
-				// Add homes to map
-				$.getJSON("data/sample_homes.geojson",function(data){
+    				    iconSize:     [40, 40], // size of the icon
+    				    shadowSize:   [66, 34], // size of the shadow
+    				    iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
+    				    shadowAnchor: [19, 14],  // the same for the shadow
+    				    popupAnchor:  [0, -20] // point from which the popup should open relative to the iconAnchor
+    				});
 
-					coffeeShopPoints = L.geoJson(data,{
-						pointToLayer: function (feature, latlng) {
-					        return L.marker(latlng, {icon: home_icon});
-					    },
-					    onEachFeature: function (feature, layer) {
-							var popupContent = feature.properties.NUMERO;
-							layer.bindPopup(feature.properties.name);
-					    }
-					}).addTo(map);
-				});
+    				// Null variable that will hold our data
+    				var coffeeShopPoints = null;
 
 
-					// coffeeShopPoints = L.geoJson(data,{
-					// 	onEachFeature: function (feature, layer, latlng) {
-					// 		layer.bindPopup(feature.properties.name);				
-					// 	}
-					// }).addTo(map);
+    				// Add homes to map
+    				$.getJSON("data/sample_homes.geojson",function(data){
 
-				// Function to remove coffee shops
-				function removeCoffeeShops(){
-					map.removeLayer(coffeeShopPoints);
-				};
+    					coffeeShopPoints = L.geoJson(data,{
+    						pointToLayer: function (feature, latlng) {
+    					        return L.marker(latlng, {icon: home_icon});
+    					    },
+    					    onEachFeature: function (feature, layer) {
+    							var popupContent = feature.properties.NUMERO;
+    							layer.bindPopup(feature.properties.name);
+    					    }
+    					}).addTo(map);
+    				});
 
-				// Function to toggle coffee shops
-				function toggleCoffeeShops(){
-					if(map.hasLayer(coffeeShopPoints)){
-						removeCoffeeShops();
-					} else {
-						addCoffeeShops();
-					}
-				};
 
-				// Use $( "elementID") and the jQuery click listener method to add on the add button
-				$( "#addButton" ).click(function() {
-					addCoffeeShops();
-				});
+    					// coffeeShopPoints = L.geoJson(data,{
+    					// 	onEachFeature: function (feature, layer, latlng) {
+    					// 		layer.bindPopup(feature.properties.name);				
+    					// 	}
+    					// }).addTo(map);
 
-				// Use $( "elementID") and the jQuery click listener method to remove on the remove button
-				$( "#removeButton" ).click(function() {
-					removeCoffeeShops();
-				});
+    				// Function to remove coffee shops
+    				function removeCoffeeShops(){
+    					map.removeLayer(coffeeShopPoints);
+    				};
 
-			</script>
+    				// Function to toggle coffee shops
+    				function toggleCoffeeShops(){
+    					if(map.hasLayer(coffeeShopPoints)){
+    						removeCoffeeShops();
+    					} else {
+    						addCoffeeShops();
+    					}
+    				};
+
+    				// Use $( "elementID") and the jQuery click listener method to add on the add button
+    				$( "#addButton" ).click(function() {
+    					addCoffeeShops();
+    				});
+
+    				// Use $( "elementID") and the jQuery click listener method to remove on the remove button
+    				$( "#removeButton" ).click(function() {
+    					removeCoffeeShops();
+    				});
+
+    			</script>
           </div>
 
         </div>
@@ -280,6 +284,7 @@
     </div>
     <!-- /.container -->
      
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script> 
     <script type="text/javascript">
     $(function() {
         $('input[name="moveindate"]').daterangepicker({
@@ -298,11 +303,12 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/bootstrap-slider.js"></script>
     <script>
-      $("#price").slider({});
-      $("#distance").slider({
-        formatter: function(value) {
-          return 'Current value: ' + value;
-        }
+      $("#price").slider().on('slide',function(event){
+        $("#show_plow").text("$"+event.value[0]);
+        $("#show_phigh").text("$"+event.value[1]);
+      });
+      $("#distance").slider().on('slide',function(event){
+        $("#show_dist").text(event.value+" min");
       });
     </script>
 
