@@ -129,6 +129,30 @@ router.get('/278hnf2736jgi_hr25', function(req, res, next) {
 	});
 })
 
+router.get('/listings',function(req, res, next) {
+	res.render('listings');
+})
+
+router.get('/listings_geo',function(req, res, next) {
+	var ref = database.ref("/listings/");
+	ref.once('value').then(function(snapshot) {
+		var listings = snapshot.val();
+		var listingKeys = Object.keys(listings);
+		var features = []
+		for (var key of listingKeys) {
+			info = listings[key];
+			feature = {
+				"type":"Feature",
+				"properties":{"id":key,"name":info.title},
+				"geometry":{"type":"Point","coordinates":[info.long,info.lat]}
+			};
+			features.push(feature);
+		}
+		geo = {"type":"FeatureCollection","features":features};
+		res.json(geo);
+	});
+})
+
 function addListing(listingData) {
 
   var newListingKey = firebase.database().ref().child('listings').push().key;
