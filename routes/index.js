@@ -130,7 +130,22 @@ router.get('/278hnf2736jgi_hr25', function(req, res, next) {
 })
 
 router.get('/listings',function(req, res, next) {
-	res.render('listings');
+	var ref = database.ref("/listings/");
+	ref.once('value').then(function(snapshot) {
+		var listings = snapshot.val();
+		var listingKeys = Object.keys(listings);
+		var summaries = [];
+		for (var key of listingKeys) {
+			info = listings[key];
+			summary = {
+				key: key,
+				title: info.title,
+				descShort: info.descShort,
+			};
+			summaries.push(summary);
+		}
+		res.render('listings',{listings:summaries});
+	});
 })
 
 router.get('/listings_geo',function(req, res, next) {
@@ -138,7 +153,7 @@ router.get('/listings_geo',function(req, res, next) {
 	ref.once('value').then(function(snapshot) {
 		var listings = snapshot.val();
 		var listingKeys = Object.keys(listings);
-		var features = []
+		var features = [];
 		for (var key of listingKeys) {
 			info = listings[key];
 			feature = {
