@@ -30,6 +30,12 @@
       div.tooltip.tooltip-main.top {
         display: none;
       }
+      .dropdown-menu a {
+        cursor: pointer;
+      }
+      .dropdown-menu li:first-child {
+        display: none;
+      }
     </style>
     
     <!-- Map CSS -->
@@ -120,13 +126,13 @@
                 Distance from MIT
                 <div class="dropdown" style="display:inline"> 
                   <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    Options
+                    <span id="selected-mot" rel="walk">Walking</span>
                     <span class="caret"></span>
                   </button>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                    <li><a href="#">Walking</a></li>
-                    <li><a href="#">Biking</a></li>
-                    <li><a href="#">Driving</a></li>
+                  <ul class="dropdown-menu" id="transportation" aria-labelledby="dropdownDistance">
+                    <li><a id="walk">Walking</a></li>
+                    <li><a id="bike">Biking</a></li>
+                    <li><a id="drive">Driving</a></li>
                   </ul>
                 </div>
                 <input id="distance" data-slider-id='distSlider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="20"/> <div style="display:inline;margin-left:10px;font-weight:bold;" id="show_dist">20 min</div>
@@ -310,6 +316,16 @@
       $("#distance").slider().on('slide',function(event){
         $("#show_dist").text(event.value+" min");
       });
+    </script>
+    <script>
+      $(document).ready(function(){
+        $("#transportation li a").on('click',function(event){
+          $("#selected-mot").attr('rel',$(this).attr('id'));
+          $("#selected-mot").text($(this).text());
+          $("#transportation li").show();
+          $(this).parent("li").hide();
+        })
+      })
     </script>
 
 </body>
