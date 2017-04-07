@@ -17,6 +17,17 @@
 
     <!-- Slider CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/css/bootstrap-slider.css">
+    <style>
+      #distSlider .slider-selection {
+        background: #BABABA;
+      }
+      #priceSlider .slider-selection {
+        background: #BABABA;
+      }
+      div.tooltip.tooltip-main.top {
+        display: none;
+      }
+    </style>
     
     <!-- Map CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css" />
@@ -79,11 +90,12 @@
             <!--Filters-->
             <div class="container" style="padding: 20px">
               <div class="row">
-                Price <b>$0</b> <input id="price" type="text" class="span2" value="" data-slider-min="0" data-slider-max="4000" data-slider-step="50" data-slider-value="[1000,2000]"/> <b>$4000</b>
+                Price <div style="display:inline;margin-right:10px;font-weight:bold;" id="show_plow">$0</div> <input id="price" type="text" class="span2" value="" data-slider-id='priceSlider'
+                data-slider-min="0" data-slider-max="4000" data-slider-step="50" data-slider-value="[0,4000]"/> <div style="display:inline;margin-left:10px;font-weight:bold;" id="show_phigh">$4000</div>
               </div>
               <div class="row">
                 Distance from MIT
-                <div class="dropdown" style="display:inline"> 
+                <div class="dropdown" style="display:inline;margin-right:10px;"> 
                   <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     Options
                     <span class="caret"></span>
@@ -94,7 +106,7 @@
                     <li><a href="#">Driving</a></li>
                   </ul>
                 </div>
-                <input id="distance" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14"/> <b>20 minutes</b>
+                <input id="distance" data-slider-id='distSlider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="20"/> <div style="display:inline;margin-left:10px;font-weight:bold;" id="show_dist">20 min</div>
               </div>
               <div class="row">
                 Move in <input type="text" name="moveindate" value="3/20/2017" /> Move out <input type="text" name="moveoutdate" value="8/1/2017" />
@@ -117,11 +129,11 @@
           </div>
 
       <!--Leaflet Map Columns-->
-      <div class="col-md-6 right-side">
+      <div class="col-md-6" style="position:fixed;height:100%;right:0;">
       <!-- Our web map and content will go here -->
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
 			<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-			<div id="map" style="width: 100%; height: 800px"></div>
+			<div id="map" style="width:100%;height:100%"></div>
 			<script>
 		    	// Web map code goes here
 		    	var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14 });
@@ -201,6 +213,7 @@
         <!-- /.row -->
     </div>
     <!-- /.container -->
+
     <script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script> 
     <script type="text/javascript">
     $(function() {
@@ -220,11 +233,12 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/bootstrap-slider.js"></script>
     <script>
-      $("#price").slider({});
-      $("#distance").slider({
-        formatter: function(value) {
-          return 'Current value: ' + value;
-        }
+      $("#price").slider().on('slide',function(event){
+        $("#show_plow").text("$"+event.value[0]);
+        $("#show_phigh").text("$"+event.value[1]);
+      });
+      $("#distance").slider().on('slide',function(event){
+        $("#show_dist").text(event.value+" min");
       });
     </script>
 
