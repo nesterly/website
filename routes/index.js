@@ -135,16 +135,25 @@ router.get('/listings',function(req, res, next) {
 		var listings = snapshot.val();
 		var listingKeys = Object.keys(listings);
 		var summaries = [];
+		var walks = [];
+		var bikes = [];
+		var drives = [];
 		for (var key of listingKeys) {
 			info = listings[key];
 			summary = {
-				key: key,
+				id: key,
 				title: info.title,
 				descShort: info.descShort,
 			};
 			summaries.push(summary);
+			walks.push(info.walk);
+			bikes.push(info.bike);
+			drives.push(info.drive);
 		}
-		res.render('listings',{listings:summaries});
+		var maxWalk = Math.max.apply(null,walks);
+		var maxBike = Math.max.apply(null,bikes);
+		var maxDrive = Math.max.apply(null,drives);
+		res.render('listings',{listings:summaries,maxWalk:maxWalk,maxBike:maxBike,maxDrive:maxDrive});
 	});
 })
 
@@ -165,6 +174,28 @@ router.get('/listings_geo',function(req, res, next) {
 		}
 		geo = {"type":"FeatureCollection","features":features};
 		res.json(geo);
+	});
+})
+
+router.get('/listings_filter',function(req, res, next) {
+	var dist = req.query.dist;
+	var distType = req.query.distType;
+	var ref = database.ref("/listings/");
+	ref.orderByChild(distType).endAt(dist).once('value').then(function(snapshot) {
+		var listings = snapshot.val();
+		var listingKeys = Object.keys(listings);
+		var summaries = [];
+		for (var key of listingKeys) {
+			info = listings[key];
+			summary = {
+				id: key,
+				title: info.title,
+				descShort: info.descShort,
+			};
+			summaries.push(summary);
+		}
+		console.log(summaries);
+		res.render('listings_view',{listings:summaries});
 	});
 })
 

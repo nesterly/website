@@ -33,6 +33,20 @@
       .dropdown-menu li:first-child {
         display: none;
       }
+      .listing-selected {
+				box-shadow: 0 0 8px 1px #4da6ff inset;
+      }
+      .img-portfolio {
+      	padding-top: 10px;
+      }
+      #apply-filter {
+        display: inline-block;
+        padding: 5px;
+        margin-left: 20px;
+        border-radius: 5px;
+        border: solid #4da6ff 1px;
+        cursor: pointer;
+      }
     </style>
     
     <!-- Map CSS -->
@@ -88,135 +102,132 @@
 
     <!-- Page Content -->
     <div class="container">
-        <div class="row">
+    <div class="row">
+      <!-- Side Bar Columns -->
+      <div id="left-bar" class="col-md-6">
 
-          <!-- Side Bar Columns -->
-          <div class="col-md-6">
-
-            <!--Filters-->
-            <div class="container" style="padding: 20px">
-              <div class="row">
-                Price <div style="display:inline;margin-right:10px;font-weight:bold;" id="show_plow">$0</div> <input id="price" type="text" class="span2" value="" data-slider-id='priceSlider'
-                data-slider-min="0" data-slider-max="4000" data-slider-step="50" data-slider-value="[0,4000]"/> <div style="display:inline;margin-left:10px;font-weight:bold;" id="show_phigh">$4000</div>
-              </div>
-              <div class="row">
-                Distance from MIT
-                <div class="dropdown" style="display:inline;margin-right:10px;"> 
-                  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownDistance" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span id="selected-mot" rel="walk">Walking</span>
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" id="transportation" aria-labelledby="dropdownDistance">
-                    <li><a id="walk">Walking</a></li>
-                    <li><a id="bike">Biking</a></li>
-                    <li><a id="drive">Driving</a></li>
-                  </ul>
-                </div>
-                <input id="distance" data-slider-id='distSlider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="20"/> <div style="display:inline;margin-left:10px;font-weight:bold;" id="show_dist">20 min</div>
-              </div>
-              <div class="row">
-                Move in <input type="text" name="moveindate" value="3/20/2017" /> Move out <input type="text" name="moveoutdate" value="8/1/2017" />
-              </div>
-            </div>
-
-            <!-- Listings -->
-            {{#each listings}}
-              <div class="col-md-6 img-portfolio">
-                  <a href="">
-                      <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
-                  </a>
-                  <h3>
-                      <a href="">{{title}}</a>
-                  </h3>
-                  <p>{{descShort}}</p>
-              </div>
-            {{/each}}
-
+        <!--Filters-->
+        <div class="affix col-md-6" id="filters" style="background-color:white;padding:20px;z-index:1;height:120px;">
+          <div class="row">
+            Price <div style="display:inline;margin-right:10px;font-weight:bold;" id="show_plow">$0</div> <input id="price" type="text" class="span2" value="" data-slider-id='priceSlider'
+            data-slider-min="0" data-slider-max="4000" data-slider-step="50" data-slider-value="[0,4000]"/> <div style="display:inline;margin-left:10px;font-weight:bold;" id="show_phigh">$4000</div>
           </div>
+          <div class="row">
+            Distance from MIT
+            <div class="dropdown" style="display:inline;margin-right:10px;"> 
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownDistance" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span id="selected-mot" rel="walk">Walking</span>
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" id="transportation" aria-labelledby="dropdownDistance">
+                <li><a id="walk" max="{{maxWalk}}">Walking</a></li>
+                <li><a id="bike" max="{{maxBike}}">Biking</a></li>
+                <li><a id="drive" max="{{maxDrive}}">Driving</a></li>
+              </ul>
+            </div>
+            <input id="distance" data-slider-id='distSlider' type="text" data-slider-min="0" data-slider-max="{{maxWalk}}" data-slider-step="1" data-slider-value="{{maxWalk}}"/> <div style="display:inline;margin-left:10px;font-weight:bold;" id="show_dist">{{maxWalk}} min</div>
+          </div>
+          <div class="row">
+            Move in <input type="text" name="moveindate" value="3/20/2017" /> Move out <input type="text" name="moveoutdate" value="8/1/2017" />
+            <div id="apply-filter">Apply Filter</div>
+          </div>
+        </div>
+
+        <div id="listing-view" style="position:relative;top:120px;">
+        <!-- Listings -->
+        {{#each listings}}
+          <div class="col-md-6 img-portfolio" id="{{id}}">
+						<a href="">
+						  <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
+						</a>
+						<h3>
+						  <a href="">{{title}}</a>
+						</h3>
+						<p>{{descShort}}</p>
+          </div>
+        {{/each}}
+        </div>
+
+      </div>
 
       <!--Leaflet Map Columns-->
       <div class="col-md-6" style="position:fixed;height:100%;right:0;">
-      <!-- Our web map and content will go here -->
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
-			<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-			<div id="map" style="width:100%;height:100%"></div>
-			<script>
-		    	// Web map code goes here
-		    	var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14 });
+        <!-- Our web map and content will go here -->
+  			<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
+  			<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+  			<div id="map" style="width:100%;height:100%"></div>
+  			<script>
+  		    	// Web map code goes here
+  		    	var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14 });
 
-		    	// Add Tile Layer
-				L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png').addTo(map);
+  		    	// Add Tile Layer
+  				L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png').addTo(map);
 
-		    	// // Add google map tiles
-		    	// var googleLayer = new L.Google('ROADMAP');
-		        //  map.addLayer(googleLayer);
+  		    	// // Add google map tiles
+  		    	// var googleLayer = new L.Google('ROADMAP');
+  		        //  map.addLayer(googleLayer);
 
-		      	// Add custom home icon
-		      	var home_icon = L.icon({
-				    iconUrl: '/images/home-icon.png',
-				    shadowUrl: '/images/home-shadow.png',
+  		      	// Add custom home icon
+  		      	var home_icon = L.icon({
+  				    iconUrl: '/images/home-icon.png',
+  				    shadowUrl: '/images/home-shadow.png',
 
-				    iconSize:     [40, 40], // size of the icon
-				    shadowSize:   [66, 34], // size of the shadow
-				    iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
-				    shadowAnchor: [19, 14],  // the same for the shadow
-				    popupAnchor:  [0, -20] // point from which the popup should open relative to the iconAnchor
-				});
+  				    iconSize:     [40, 40], // size of the icon
+  				    shadowSize:   [66, 34], // size of the shadow
+  				    iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
+  				    shadowAnchor: [19, 14],  // the same for the shadow
+  				    popupAnchor:  [0, -20] // point from which the popup should open relative to the iconAnchor
+  				});
 
-				// Null variable that will hold our data
-				var coffeeShopPoints = null;
+  				// Null variable that will hold our data
+  				var coffeeShopPoints = null;
 
+          function updateMap() {
+            listing_ids = [];
+            $('#listing-view div').each(function(){
+              listing_ids.push($(this).attr('id'));
+            });
+  				  // Add homes to map
+  				  $.getJSON("/listings_geo",function(data){
+    				  coffeeShopPoints = L.geoJson(data,{
+  						  pointToLayer: function (feature, latlng) {
+                  if (listing_ids.includes(feature.properties.id)) { 
+  					        return L.marker(latlng, {icon: home_icon});
+                  }
+  					    },
+  					    onEachFeature: function (feature, layer) {
+    							var popupContent = feature.properties.NUMERO;
+    							layer.bindPopup(feature.properties.name);
+  					    }
+    				  }).addTo(map);
+              coffeeShopPoints.on('click', function(e) { 
+                var id = e.layer.feature.properties.id;
+                highlight(id); 
+              });
+    				});
+          }
 
-				// Add homes to map
-				$.getJSON("/listings_geo",function(data){
+          function highlight(id) {
+            $(".img-portfolio").each(function(){
+              if ($(this).attr('id') === id) {
+                $(this).addClass("listing-selected");
+                $("body").animate({
+                  scrollTop: $(this).offset().top-$(".navbar").height()-120,
+                },500);
+              } else {
+                $(this).removeClass("listing-selected");
+              }
+            })
+          }
 
-					coffeeShopPoints = L.geoJson(data,{
-						pointToLayer: function (feature, latlng) {
-					        return L.marker(latlng, {icon: home_icon});
-					    },
-					    onEachFeature: function (feature, layer) {
-							var popupContent = feature.properties.NUMERO;
-							layer.bindPopup(feature.properties.name);
-					    }
-					}).addTo(map);
-				});
+  				// Function to remove coffee shops
+  				function removeCoffeeShops(){
+  					map.removeLayer(coffeeShopPoints);
+  				};
 
-
-					// coffeeShopPoints = L.geoJson(data,{
-					// 	onEachFeature: function (feature, layer, latlng) {
-					// 		layer.bindPopup(feature.properties.name);				
-					// 	}
-					// }).addTo(map);
-
-				// Function to remove coffee shops
-				function removeCoffeeShops(){
-					map.removeLayer(coffeeShopPoints);
-				};
-
-				// Function to toggle coffee shops
-				function toggleCoffeeShops(){
-					if(map.hasLayer(coffeeShopPoints)){
-						removeCoffeeShops();
-					} else {
-						addCoffeeShops();
-					}
-				};
-
-				// Use $( "elementID") and the jQuery click listener method to add on the add button
-				$( "#addButton" ).click(function() {
-					addCoffeeShops();
-				});
-
-				// Use $( "elementID") and the jQuery click listener method to remove on the remove button
-				$( "#removeButton" ).click(function() {
-					removeCoffeeShops();
-				});
-
-			</script>
-          </div>
-
-        </div>
-        <!-- /.row -->
+  			</script>
+      </div>
+      </div>
     </div>
     <!-- /.container -->
 
@@ -239,21 +250,42 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/bootstrap-slider.js"></script>
     <script>
-      $("#price").slider().on('slide',function(event){
-        $("#show_plow").text("$"+event.value[0]);
-        $("#show_phigh").text("$"+event.value[1]);
+      $("#price").slider().on('change',function(event){
+        $("#show_plow").text("$"+event.value.newValue[0]);
+        $("#show_phigh").text("$"+event.value.newValue[1]);
       });
-      $("#distance").slider().on('slide',function(event){
-        $("#show_dist").text(event.value+" min");
+      $("#distance").slider().on('change',function(event){
+        $("#show_dist").text(event.value.newValue+" min");
       });
     </script>
     <script>
       $(document).ready(function(){
+        updateMap();
         $("#transportation li a").on('click',function(event){
           $("#selected-mot").attr('rel',$(this).attr('id'));
           $("#selected-mot").text($(this).text());
+          $("#show_dist").text($(this).attr('max')+" min");
+          $("#distance").attr('data-slider-max',$(this).attr('max'));
+          $("#distance").attr('data-slider-value',$(this).attr('max'));
           $("#transportation li").show();
           $(this).parent("li").hide();
+        })
+        $("#apply-filter").on('click',function(event){
+          var distType = $("#selected-mot").attr('rel'); 
+          var dist = $("#distance").data('slider').getValue();
+          var filter = {
+            distType: distType,
+            dist: dist,
+          };
+          $.ajax({
+            url: '/listings_filter',
+            method: 'GET', 
+            data: filter,
+          }).done(function(response){
+            $('#listing-view').html(response);
+            map.removeLayer(coffeeShopPoints);
+            updateMap();
+          });
         })
       })
     </script>
