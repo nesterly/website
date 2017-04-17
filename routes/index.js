@@ -138,28 +138,44 @@ router.get('/listings',function(req, res, next) {
 		var walks = [];
 		var bikes = [];
 		var drives = [];
+		var prices = [];
 		for (var key of listingKeys) {
 			info = listings[key];
 			summary = {
 				id: key,
 				title: info.title,
 				descShort: info.descShort,
+				walk: info.walk,
+				bike: info.bike,
+				drive: info.drive,
+				price: info.price,
 			};
 			summaries.push(summary);
 			walks.push(info.walk);
 			bikes.push(info.bike);
 			drives.push(info.drive);
+			prices.push(info.price);
 		}
 		var maxWalk = Math.max.apply(null,walks);
 		var maxBike = Math.max.apply(null,bikes);
 		var maxDrive = Math.max.apply(null,drives);
-		res.render('listings',{listings:summaries,maxWalk:maxWalk,maxBike:maxBike,maxDrive:maxDrive});
+		var minPrice = Math.min.apply(null,prices);
+		var maxPrice = Math.max.apply(null,prices);
+		res.render('listings',{
+			listingSummaries: summaries,
+			maxWalk: maxWalk,
+			maxBike: maxBike,
+			maxDrive: maxDrive,
+			maxDist: Math.max(maxWalk,Math.max(maxBike,maxDrive)),
+			minPrice: minPrice,
+			maxPrice: maxPrice,
+		});
 	});
 })
 
 router.get('/listings_geo',function(req, res, next) {
 	var ref = database.ref("/listings/");
-	ref.once('value').then(function(snapshot) {
+	ref.once("value").then(function(snapshot) {
 		var listings = snapshot.val();
 		var listingKeys = Object.keys(listings);
 		var features = [];
@@ -177,27 +193,6 @@ router.get('/listings_geo',function(req, res, next) {
 	});
 })
 
-router.get('/listings_filter',function(req, res, next) {
-	var dist = req.query.dist;
-	var distType = req.query.distType;
-	var ref = database.ref("/listings/");
-	ref.orderByChild(distType).endAt(dist).once('value').then(function(snapshot) {
-		var listings = snapshot.val();
-		var listingKeys = Object.keys(listings);
-		var summaries = [];
-		for (var key of listingKeys) {
-			info = listings[key];
-			summary = {
-				id: key,
-				title: info.title,
-				descShort: info.descShort,
-			};
-			summaries.push(summary);
-		}
-		console.log(summaries);
-		res.render('listings_view',{listings:summaries});
-	});
-})
 
 function addListing(listingData) {
 

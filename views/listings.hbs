@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html class="full" lang="en">
-<head>
+  <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,11 +12,40 @@
     <!-- Bootstrap Core CSS -->
     <link href="stylesheets/bootstrap.css" rel="stylesheet">
 
+    <!-- Slider CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/css/bootstrap-slider.css">
+
+    <!-- Date Picker CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
+    <!-- Map CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css" />
+
     <!-- Custom CSS -->
     <link href="stylesheets/bootstrap-custom.css" rel="stylesheet">
 
-    <!-- Slider CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/css/bootstrap-slider.css">
+    <!-- JQuery JS Library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <!-- Bootstrap JS Library -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- JQuery Plugin for Time/Date -->    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+
+    <!-- Leaflet JS Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+
+    <!-- Custom JS -->
+    <script type="text/javascript" src="javascripts/listings.js"></script>
+
+    <script type="text/javascript">
+      var listingSummaries = [];
+      var maxWalk = parseInt("{{maxWalk}}");
+    </script>
+
+    <!-- Custom styles -->
     <style>
       #distSlider .slider-selection {
         background: #BABABA;
@@ -47,193 +76,140 @@
         border: solid #4da6ff 1px;
         cursor: pointer;
       }
-    </style>
-    
-    <!-- Map CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css" />
+      #filters {
+        background-color: white;
+        padding: 20px;
+        z-index: 1;
+        height: 120px;
+      }
+      #show-plow, #show-phigh, #show-dist {
+        display: inline;
+        margin-left: 20px;
+        margin-right: 20px;
+        font-weight: bold;
+      }
+      .dropdown {
+        display: inline;
+        margin-right: 10px;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>  
+  </head>
 
-    <!-- JQuery JS Library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-
-    <!-- Bootstrap JS Library -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
-    <!-- JQuery Plugin for Time/Date -->    
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-
-    <!-- Date Picker CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
-    
-</head>
-
-<body>
+  <body>
     <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="index.html">Nesterly</a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="index.html">What is nesterly?</a>
-                    </li>
-                    <li>
-                        <a href="host.html">Become a host</a>
-                    </li>
-                    <li>
-                        <a href="signup.html">Sign up</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <a class="navbar-brand" href="index.html">Nesterly</a>
         </div>
-        <!-- /.container -->
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="index.html">What is nesterly?</a>
+            </li>
+            <li>
+              <a href="host.html">Become a host</a>
+            </li>
+            <li>
+              <a href="signup.html">Sign up</a>
+            </li>
+          </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+      </div>
+      <!-- /.container -->
     </nav>
-
+    <!-- /Navigation -->
 
     <!-- Page Content -->
     <div class="container">
-    <div class="row">
-      <!-- Side Bar Columns -->
-      <div id="left-bar" class="col-md-6">
+      <div class="row">
+        <!-- Left Column -->
+        <div id="left-column" class="col-md-6">
 
-        <!--Filters-->
-        <div class="affix col-md-6" id="filters" style="background-color:white;padding:20px;z-index:1;height:120px;">
-          <div class="row">
-            Price <div style="display:inline;margin-right:10px;font-weight:bold;" id="show_plow">$0</div> <input id="price" type="text" class="span2" value="" data-slider-id='priceSlider'
-            data-slider-min="0" data-slider-max="4000" data-slider-step="50" data-slider-value="[0,4000]"/> <div style="display:inline;margin-left:10px;font-weight:bold;" id="show_phigh">$4000</div>
-          </div>
-          <div class="row">
-            Distance from MIT
-            <div class="dropdown" style="display:inline;margin-right:10px;"> 
-              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownDistance" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                <span id="selected-mot" rel="walk">Walking</span>
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" id="transportation" aria-labelledby="dropdownDistance">
-                <li><a id="walk" max="{{maxWalk}}">Walking</a></li>
-                <li><a id="bike" max="{{maxBike}}">Biking</a></li>
-                <li><a id="drive" max="{{maxDrive}}">Driving</a></li>
-              </ul>
+          <!--Filters-->
+          <div class="affix col-md-6" id="filters">
+            <!-- Price Filter -->
+            <div class="row">
+              Price <div id="show-plow">${{minPrice}}</div> <input id="price" type="text" class="span2" value="" data-slider-id='priceSlider' data-slider-min="{{minPrice}}" data-slider-max="{{maxPrice}}" data-slider-step="50" data-slider-value="[{{minPrice}},{{maxPrice}}]"/><div id="show-phigh">${{maxPrice}}</div>
             </div>
-            <input id="distance" data-slider-id='distSlider' type="text" data-slider-min="0" data-slider-max="{{maxWalk}}" data-slider-step="1" data-slider-value="{{maxWalk}}"/> <div style="display:inline;margin-left:10px;font-weight:bold;" id="show_dist">{{maxWalk}} min</div>
+            <!-- /Price Filter -->
+
+            <!-- Distance Filter -->
+            <div class="row">
+              Distance from MIT
+              <div class="dropdown"> 
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownDistance" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span id="selected-mot" rel="walk">Walking</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" id="transportation" aria-labelledby="dropdownDistance">
+                  <li><a id="walk">Walking</a></li>
+                  <li><a id="bike">Biking</a></li>
+                  <li><a id="drive">Driving</a></li>
+                </ul>
+              </div>
+              <input id="distance" data-slider-id='distSlider' type="text" data-slider-min="0" data-slider-max="{{maxDist}}" data-slider-step="1" data-slider-value="{{maxDist}}"/> <div id="show-dist">{{maxDist}} min</div>
+            </div>
+            <!-- /Distance Filter -->
+
+            <!-- Dates Filter & Apply Filter -->
+            <div class="row">
+              Move in <input type="text" name="moveindate" value="3/20/2017" /> Move out <input type="text" name="moveoutdate" value="8/1/2017" />
+              <div id="apply-filter">Apply Filter</div>
+            </div>
+            <!-- /Dates Filter & Apply Filter-->
           </div>
-          <div class="row">
-            Move in <input type="text" name="moveindate" value="3/20/2017" /> Move out <input type="text" name="moveoutdate" value="8/1/2017" />
-            <div id="apply-filter">Apply Filter</div>
+          <!-- /Filters -->
+
+          <!-- Listings -->
+          <div id="listings" style="position:relative;top:120px;">
+            {{#each listingSummaries}}
+              <div class="col-md-6 img-portfolio" id="{{id}}">
+      					<a href="">
+      					  <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
+      					</a>
+      					<h3>
+      					  <a href="">{{title}}</a>
+      					</h3>
+      					<p>{{descShort}}</p>
+              </div>
+              <script type="text/javascript">
+                var summary = {};
+                summary.id = "{{id}}";
+                summary.title = "{{title}}";
+                summary.descShort = "{{descShort}}";
+                summary.walk = "{{walk}}";
+                summary.drive = "{{drive}}";
+                summary.bike = "{{bike}}";
+                summary.price = "{{price}}";
+                listingSummaries.push(summary);               
+              </script>
+            {{/each}}
           </div>
+          <!-- /Listings -->
         </div>
+        <!-- /Left Column -->
 
-        <div id="listing-view" style="position:relative;top:120px;">
-        <!-- Listings -->
-        {{#each listings}}
-          <div class="col-md-6 img-portfolio" id="{{id}}">
-						<a href="">
-						  <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
-						</a>
-						<h3>
-						  <a href="">{{title}}</a>
-						</h3>
-						<p>{{descShort}}</p>
-          </div>
-        {{/each}}
+        <!-- Right (Map) Column -->
+        <div class="col-md-6" style="position:fixed;height:100%;right:0;">
+    			<div id="map" style="width:100%;height:100%"></div>
         </div>
-
+        <!-- /Right (Map) Column --> 
       </div>
-
-      <!--Leaflet Map Columns-->
-      <div class="col-md-6" style="position:fixed;height:100%;right:0;">
-        <!-- Our web map and content will go here -->
-  			<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
-  			<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-  			<div id="map" style="width:100%;height:100%"></div>
-  			<script>
-  		    	// Web map code goes here
-  		    	var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14 });
-
-  		    	// Add Tile Layer
-  				L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png').addTo(map);
-
-  		    	// // Add google map tiles
-  		    	// var googleLayer = new L.Google('ROADMAP');
-  		        //  map.addLayer(googleLayer);
-
-  		      	// Add custom home icon
-  		      	var home_icon = L.icon({
-  				    iconUrl: '/images/home-icon.png',
-  				    shadowUrl: '/images/home-shadow.png',
-
-  				    iconSize:     [40, 40], // size of the icon
-  				    shadowSize:   [66, 34], // size of the shadow
-  				    iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
-  				    shadowAnchor: [19, 14],  // the same for the shadow
-  				    popupAnchor:  [0, -20] // point from which the popup should open relative to the iconAnchor
-  				});
-
-  				// Null variable that will hold our data
-  				var coffeeShopPoints = null;
-
-          function updateMap() {
-            listing_ids = [];
-            $('#listing-view div').each(function(){
-              listing_ids.push($(this).attr('id'));
-            });
-  				  // Add homes to map
-  				  $.getJSON("/listings_geo",function(data){
-    				  coffeeShopPoints = L.geoJson(data,{
-  						  pointToLayer: function (feature, latlng) {
-                  if (listing_ids.includes(feature.properties.id)) { 
-  					        return L.marker(latlng, {icon: home_icon});
-                  }
-  					    },
-  					    onEachFeature: function (feature, layer) {
-    							var popupContent = feature.properties.NUMERO;
-    							layer.bindPopup(feature.properties.name);
-  					    }
-    				  }).addTo(map);
-              coffeeShopPoints.on('click', function(e) { 
-                var id = e.layer.feature.properties.id;
-                highlight(id); 
-              });
-    				});
-          }
-
-          function highlight(id) {
-            $(".img-portfolio").each(function(){
-              if ($(this).attr('id') === id) {
-                $(this).addClass("listing-selected");
-                $("body").animate({
-                  scrollTop: $(this).offset().top-$(".navbar").height()-120,
-                },500);
-              } else {
-                $(this).removeClass("listing-selected");
-              }
-            })
-          }
-
-  				// Function to remove coffee shops
-  				function removeCoffeeShops(){
-  					map.removeLayer(coffeeShopPoints);
-  				};
-
-  			</script>
-      </div>
-      </div>
+      <!-- /.row -->
     </div>
-    <!-- /.container -->
+    <!-- /Page Content -->
 
+    <!-- Data range picker plugin scripts -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script> 
     <script type="text/javascript">
-    $(function() {
+      $(function() {
         $('input[name="moveindate"]').daterangepicker({
             singleDatePicker: true,
             showDropdowns: true
@@ -246,48 +222,20 @@
         }, 
         function(start, end, label) {
         });
-    });
+      });
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/bootstrap-slider.js"></script>
-    <script>
+
+    <!-- Slider plugin scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/bootstrap-slider.js">
+    </script>
+    <script type="text/javascript">
       $("#price").slider().on('change',function(event){
-        $("#show_plow").text("$"+event.value.newValue[0]);
-        $("#show_phigh").text("$"+event.value.newValue[1]);
+        $("#show-plow").text("$"+event.value.newValue[0]);
+        $("#show-phigh").text("$"+event.value.newValue[1]);
       });
       $("#distance").slider().on('change',function(event){
-        $("#show_dist").text(event.value.newValue+" min");
+        $("#show-dist").text(event.value.newValue+" min");
       });
     </script>
-    <script>
-      $(document).ready(function(){
-        updateMap();
-        $("#transportation li a").on('click',function(event){
-          $("#selected-mot").attr('rel',$(this).attr('id'));
-          $("#selected-mot").text($(this).text());
-          $("#show_dist").text($(this).attr('max')+" min");
-          $("#distance").attr('data-slider-max',$(this).attr('max'));
-          $("#distance").attr('data-slider-value',$(this).attr('max'));
-          $("#transportation li").show();
-          $(this).parent("li").hide();
-        })
-        $("#apply-filter").on('click',function(event){
-          var distType = $("#selected-mot").attr('rel'); 
-          var dist = $("#distance").data('slider').getValue();
-          var filter = {
-            distType: distType,
-            dist: dist,
-          };
-          $.ajax({
-            url: '/listings_filter',
-            method: 'GET', 
-            data: filter,
-          }).done(function(response){
-            $('#listing-view').html(response);
-            map.removeLayer(coffeeShopPoints);
-            updateMap();
-          });
-        })
-      })
-    </script>
-</body>
+  </body>
 </html>
