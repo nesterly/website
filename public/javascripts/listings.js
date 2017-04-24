@@ -50,7 +50,7 @@ $(document).ready(function(){
   var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14 });
 
   // Add tile layer
-  L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png').addTo(map);
+  L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}').addTo(map);
 
   // Add custom home icon
   var home_icon = L.icon({
