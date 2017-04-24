@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html class="full" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Nesterly</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="stylesheets/bootstrap.css" rel="stylesheet">
+
+    <!-- Slider CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/css/bootstrap-slider.css">
+
+    <!-- Date Picker CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
+    <!-- Map CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.css" />
+
+    <!-- Custom CSS -->
+    <link href="stylesheets/bootstrap-custom.css" rel="stylesheet">
+
+    <!-- JQuery JS Library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <!-- Bootstrap JS Library -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- JQuery Plugin for Time/Date -->    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+
+    <!-- Leaflet JS Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+
+    <!-- Custom JS -->
+    <script type="text/javascript" src="javascripts/listings.js"></script>
+
+    <script type="text/javascript">
+      var listingSummaries = [];
+      var maxWalk = parseInt("{{maxWalk}}");
+    </script>
+
+    <!-- Custom styles -->
+    <style>
+      #distSlider .slider-selection {
+        background: #BABABA;
+      }
+      #priceSlider .slider-selection {
+        background: #BABABA;
+      }
+      div.tooltip.tooltip-main.top {
+        display: none;
+      }
+      .dropdown-menu a {
+        cursor: pointer;
+      }
+      .dropdown-menu li:first-child {
+        display: none;
+      }
+      .listing-selected {
+				box-shadow: 0 0 8px 1px #4da6ff inset;
+      }
+      .img-portfolio {
+      	padding-top: 10px;
+      }
+      #apply-filter {
+        display: inline-block;
+        margin-left: 20px;
+        padding: 5px;
+        color: #4da6ff;
+        border: solid #4da6ff 1px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      #apply-filter:hover {
+        color: white;
+        background-color: #4da6ff;      
+      }
+      #filters {
+        background-color: white;
+        padding: 20px;
+        z-index: 1;
+        height: 120px;
+      }
+      #show-plow, #show-phigh, #show-dist {
+        display: inline;
+        margin-left: 20px;
+        margin-right: 20px;
+        font-weight: bold;
+      }
+      .dropdown {
+        display: inline;
+        margin-right: 10px;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>  
+  </head>
+
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <a class="navbar-brand" href="index.html">Nesterly</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="index.html">What is nesterly?</a>
+            </li>
+            <li>
+              <a href="host.html">Become a host</a>
+            </li>
+            <li>
+              <a href="signup.html">Sign up</a>
+            </li>
+          </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+      </div>
+      <!-- /.container -->
+    </nav>
+    <!-- /Navigation -->
+
+    <!-- Page Content -->
+    <div class="container">
+      <div class="row">
+        <!-- Left Column -->
+        <div id="left-column" class="col-md-6">
+
+          <!--Filters-->
+          <div class="affix col-md-6" id="filters">
+            <!-- Price Filter -->
+            <div class="row">
+              Price <div id="show-plow">${{minPrice}}</div> <input id="price" type="text" class="span2" value="" data-slider-id='priceSlider' data-slider-min="{{minPrice}}" data-slider-max="{{maxPrice}}" data-slider-step="50" data-slider-value="[{{minPrice}},{{maxPrice}}]"/><div id="show-phigh">${{maxPrice}}</div>
+            </div>
+            <!-- /Price Filter -->
+
+            <!-- Distance Filter -->
+            <div class="row">
+              Distance from MIT
+              <div class="dropdown"> 
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownDistance" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <span id="selected-mot" rel="walk">Walking</span>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" id="transportation" aria-labelledby="dropdownDistance">
+                  <li><a id="walk">Walking</a></li>
+                  <li><a id="bike">Biking</a></li>
+                  <li><a id="drive">Driving</a></li>
+                  <li><a id="transit">Public Transit</a></li>
+                </ul>
+              </div>
+              <input id="distance" data-slider-id='distSlider' type="text" data-slider-min="0" data-slider-max="{{maxDist}}" data-slider-step="1" data-slider-value="{{maxDist}}"/> <div id="show-dist">{{maxDist}} min</div>
+            </div>
+            <!-- /Distance Filter -->
+
+            <!-- Dates Filter & Apply Filter -->
+            <div class="row">
+              Move in <input type="text" name="moveindate" value="" /> Move out <input type="text" name="moveoutdate" value="" />
+              <div id="apply-filter">Apply Filter</div>
+            </div>
+            <!-- /Dates Filter & Apply Filter-->
+          </div>
+          <!-- /Filters -->
+
+          <!-- Listings -->
+          <div id="listings" style="position:relative;top:120px;">
+            {{#each listingSummaries}}
+              <div class="col-md-6 img-portfolio" id="{{id}}">
+      					<a href="">
+      					  <img class="img-responsive img-hover" src="{{imageUrl}}" alt="">
+      					</a>
+      					<h3>
+      					  <a href="">{{title}}</a>
+      					</h3>
+      					<p>{{descShort}}</p>
+              </div>
+              <script type="text/javascript">
+                var summary = {};
+                summary.id = "{{id}}";
+                summary.title = "{{title}}";
+                summary.descShort = "{{descShort}}";
+                summary.walk = "{{walk}}";
+                summary.drive = "{{drive}}";
+                summary.bike = "{{bike}}";
+                summary.transit = "{{transit}}";
+                summary.price = "{{price}}";
+                summary.imageUrl = "{{imageUrl}}";
+                summary.stayMin = "{{stayMin}}";
+                summary.stayMax = "{{stayMax}}";
+                listingSummaries.push(summary);               
+              </script>
+            {{/each}}
+          </div>
+          <!-- /Listings -->
+        </div>
+        <!-- /Left Column -->
+
+        <!-- Right (Map) Column -->
+        <div class="col-md-6" style="position:fixed;height:100%;right:0;">
+    			<div id="map" style="width:100%;height:100%"></div>
+        </div>
+        <!-- /Right (Map) Column --> 
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /Page Content -->
+
+    <!-- Data range picker plugin scripts -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script> 
+    <script type="text/javascript">
+      $(function() {
+        $('input[name="moveindate"]').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true
+        }, 
+        function(start, end, label) {
+        });
+        $('input[name="moveoutdate"]').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true
+        }, 
+        function(start, end, label) {
+        });
+      });
+    </script>
+
+    <!-- Slider plugin scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/bootstrap-slider.js">
+    </script>
+    <script type="text/javascript">
+      $("#price").slider().on('change',function(event){
+        $("#show-plow").text("$"+event.value.newValue[0]);
+        $("#show-phigh").text("$"+event.value.newValue[1]);
+      });
+      $("#distance").slider().on('change',function(event){
+        $("#show-dist").text(event.value.newValue+" min");
+      });
+    </script>
+  </body>
+</html>
