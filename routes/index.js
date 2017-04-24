@@ -163,6 +163,8 @@ router.get('/listings',function(req, res, next) {
 				transit: info.transit,
 				price: info.price,
 				imageUrl: info.imageUrl,
+				stayMin: info.stayMin,
+				stayMax: info.stayMax,
 			};
 			summaries.push(summary);
 			walks.push(info.walk);

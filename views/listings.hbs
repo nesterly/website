@@ -166,7 +166,7 @@
 
             <!-- Dates Filter & Apply Filter -->
             <div class="row">
-              Move in <input type="text" name="moveindate" value="3/20/2017" /> Move out <input type="text" name="moveoutdate" value="8/1/2017" />
+              Move in <input type="text" name="moveindate" value="" /> Move out <input type="text" name="moveoutdate" value="" />
               <div id="apply-filter">Apply Filter</div>
             </div>
             <!-- /Dates Filter & Apply Filter-->
@@ -196,6 +196,8 @@
                 summary.transit = "{{transit}}";
                 summary.price = "{{price}}";
                 summary.imageUrl = "{{imageUrl}}";
+                summary.stayMin = "{{stayMin}}";
+                summary.stayMax = "{{stayMax}}";
                 listingSummaries.push(summary);               
               </script>
             {{/each}}

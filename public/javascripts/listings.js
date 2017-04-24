@@ -11,19 +11,30 @@ $(document).ready(function(){
     $("#selected-mot").text($(this).text());
     $("#transportation li").show();
     $(this).parent("li").hide();
-  })
+  });
 
   $("#apply-filter").on('click',function(event){
     var distType = $("#selected-mot").attr('rel'); 
     var dist = $("#distance").data('slider').getValue();
     var priceRange = $("#price").data('slider').getValue();
-    filter(dist,distType,priceRange[0],priceRange[1]);
+    var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+    var dateRegex = /([0-9]+)\/([0-9]+)\/([0-9]+)/g;
+    var start = $('input[name="moveindate"]').val();
+    var matchStart = dateRegex.exec(start);
+    var end = $('input[name="moveoutdate"]').val();
+    dateRegex = /([0-9]+)\/([0-9]+)\/([0-9]+)/g;
+    var matchEnd = dateRegex.exec(end);
+    var startDate = new Date(parseInt(matchStart[3]),parseInt(matchStart[1])-1,parseInt(matchStart[2]));
+    var endDate = new Date(parseInt(matchEnd[3]),parseInt(matchEnd[1])-1,parseInt(matchEnd[2]));
+    var duration = Math.round((endDate.getTime() - startDate.getTime())/oneDay);
+    filter(dist,distType,priceRange[0],priceRange[1],duration);
   });
 
-  function filter(dist,distType,priceL,priceH) {
+  function filter(dist,distType,priceL,priceH,duration) {
     var visible_listings = []; 
     for (var summary of listingSummaries) {
-      if (summary[distType] <= dist && summary.price >= priceL && summary.price <= priceH) {
+      if (summary[distType] <= dist && summary.price >= priceL && summary.price <= priceH 
+        && ((summary.stayMin <= duration && duration <= summary.stayMax) || duration <= 0)) {
         $("#"+summary.id).removeClass('hidden');
         visible_listings.push(summary.id);
       } else {
