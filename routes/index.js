@@ -3,6 +3,10 @@ var router = express.Router();
 
 var firebase = require("firebase");
 var firebaseConfig;
+
+var aws = require('aws-sdk');
+var S3_BUCKET;
+
 if (process.env.NODE_ENV) {
 	var config = process.env;
 	firebaseConfig = {
@@ -12,6 +16,9 @@ if (process.env.NODE_ENV) {
 	  storageBucket: config.firebaseStorageBucket,
 	  messagingSenderId: config.firebaseMessagingSenderId
 	};
+	AWS_ACCESS_KEY_ID = config.AWS_ACCESS_KEY_ID;
+	AWS_SECRET_ACCESS_KEY = config.AWS_SECRET_ACCESS_KEY;
+	S3_BUCKET = config.S3_BUCKET;
 } else {
 	var config = require('../config')['development'];
 	firebaseConfig = {
@@ -21,9 +28,12 @@ if (process.env.NODE_ENV) {
 	  storageBucket: config.firebase.storageBucket,
 	  messagingSenderId: config.firebase.messagingSenderId
 	};
+	AWS_ACCESS_KEY_ID = config.s3.AWS_ACCESS_KEY_ID;
+	AWS_SECRET_ACCESS_KEY = config.s3.AWS_SECRET_ACCESS_KEY;
+	S3_BUCKET = config.s3.S3_BUCKET;
 }
-firebase.initializeApp(firebaseConfig);
 
+firebase.initializeApp(firebaseConfig);
 var database = firebase.database();
 
 /* GET home page. */
@@ -110,6 +120,7 @@ router.post('/add_listing', function(req, res, next) {
     houseRule: req.body.house_rule,
     stayMin: req.body.stay_min,
     stayMax: req.body.stay_max,
+    price: req.body.price,
   };
 
   var result = addListing(newListing);
@@ -127,7 +138,7 @@ router.get('/278hnf2736jgi_hr25', function(req, res, next) {
 		}
 		res.send(listingsInfo);
 	});
-})
+});
 
 router.get('/listings',function(req, res, next) {
 	var ref = database.ref("/listings/");
@@ -138,6 +149,7 @@ router.get('/listings',function(req, res, next) {
 		var walks = [];
 		var bikes = [];
 		var drives = [];
+		var transits = [];
 		var prices = [];
 		for (var key of listingKeys) {
 			info = listings[key];
@@ -148,17 +160,21 @@ router.get('/listings',function(req, res, next) {
 				walk: info.walk,
 				bike: info.bike,
 				drive: info.drive,
+				transit: info.transit,
 				price: info.price,
+				imageUrl: info.imageUrl,
 			};
 			summaries.push(summary);
 			walks.push(info.walk);
 			bikes.push(info.bike);
 			drives.push(info.drive);
+			transits.push(info.transit);
 			prices.push(info.price);
 		}
 		var maxWalk = Math.max.apply(null,walks);
 		var maxBike = Math.max.apply(null,bikes);
 		var maxDrive = Math.max.apply(null,drives);
+		var maxTransit = Math.max.apply(null,transits);
 		var minPrice = Math.min.apply(null,prices);
 		var maxPrice = Math.max.apply(null,prices);
 		res.render('listings',{
@@ -166,12 +182,13 @@ router.get('/listings',function(req, res, next) {
 			maxWalk: maxWalk,
 			maxBike: maxBike,
 			maxDrive: maxDrive,
-			maxDist: Math.max(maxWalk,Math.max(maxBike,maxDrive)),
+			maxTransit: maxTransit,
+			maxDist: Math.max.apply(null,[maxWalk,maxBike,maxDrive,maxTransit]),
 			minPrice: minPrice,
 			maxPrice: maxPrice,
 		});
 	});
-})
+});
 
 router.get('/listings_geo',function(req, res, next) {
 	var ref = database.ref("/listings/");
@@ -191,8 +208,36 @@ router.get('/listings_geo',function(req, res, next) {
 		geo = {"type":"FeatureCollection","features":features};
 		res.json(geo);
 	});
-})
+});
 
+router.get('/sign-s3', (req, res) => {
+  var s3 = new aws.S3({accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY});
+  var fileType = req.query['file-type'];
+  var userID = "nesterly-admin";
+  var timestamp = new Date().getTime();
+  var suffix = Math.floor(Math.random()*400); 
+  var fileName = userID+"-"+timestamp+"-"+suffix;
+  var s3Params = {
+    Bucket: S3_BUCKET,
+    Key: fileName,
+    Expires: 60,
+    ContentType: fileType,
+    ACL: 'public-read'
+  };
+
+  s3.getSignedUrl('putObject', s3Params, (err, data) => {
+    if(err){
+      console.log(err);
+      return res.end();
+    }
+    var returnData = {
+      signedRequest: data,
+      url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
+    };
+    res.write(JSON.stringify(returnData));
+    res.end();
+  });
+});
 
 function addListing(listingData) {
 

@@ -30,6 +30,7 @@ $(document).ready(function(){
         $("#"+summary.id).addClass('hidden');
       }
     }
+    $(".img-portfolio").removeClass("listing-selected");
     map.removeLayer(homePoints);
     updateMap(visible_listings);
   }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
-<head>
+<html class="full" lang="en">
+  <head>
+    <meta charset="utf-8">
 
 	<title>
 		Nesterly | Create Listing
@@ -8,7 +9,7 @@
 
 	<style>
 		body {
-			font-family: "Lucida Grande";
+		  font-family: "Lucida Grande";
 		}
 		h1 {
 		  font-size: 2.5vw;
@@ -34,6 +35,14 @@
 			width: 70%;
 			vertical-align: top;
 		}
+    #image-upload {
+      margin-left: 29%;
+    }
+    #preview {
+      height: 300px;
+      width: 400px;
+      border: solid #4da6ff 1px;
+    }
 		#submit-button {
 			margin: auto;
 			text-align: center;
@@ -51,9 +60,34 @@
 			color: white;
 			background-color: #3498db; 			
 		}
+    #image {
+      max-width: 100%; /* This rule is very important, please do not ignore this! */
+    }
+    #wrapper {
+      width: 400px;
+    }
+    #crop-upload {
+      text-align: center;
+      width: 200px;
+      height: 26px;
+      font-size: 20px;
+      color: #3498db;
+      border-style: solid;
+      border-width: 2px;
+      border-color: #3498db;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    #crop-upload:hover {
+      color: white;
+      background-color: #3498db;      
+    }
 	</style>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+  <link  href="stylesheets/cropper.css" rel="stylesheet">
+  <script src="javascripts/cropper.js"></script>
 
 </head>
 <body>
@@ -123,8 +157,18 @@
 
 	<div class="form-header"><h1>Room</h1></div>
 
-    <div class="form-title">Room Image URL: </div>
-    <input id="image-url-input" type="text" name="image_url" placeholder="Enter an image URL.">
+    <div class="form-title">Room Image: </div>
+    <input type="file" id="file-input">
+    <div id="image-upload">
+      <div id="wrapper">
+        <img id="image" src="images/crop-default.png">
+      </div>
+      <div id="crop-upload">
+        Crop and Upload
+      </div>
+      <img id="preview" src="images/preview.png">
+    </div>
+    <input type="hidden" id="image-url-input" name="image_url" value="/images/crop-default.png">
     <br><br>     
 
     <div class="form-title">Room Area: </div>
@@ -242,18 +286,89 @@
     <span> day(s)</span>
     <br><br>
 
+    <div class="form-title">Price: </div>
+    <span>$</span>
+    <input id="price-input" type="number" name="price" value="0">
+    <br><br> 
+
     <div style="width: 100%">
     	<div id="submit-button">Create</div>
     </div>
 	</form>
 
-	<script>
-		$(document).ready(function(){
-			$("#submit-button").on('click',function(){
-				$("#add-listing-form").submit();
-			})
-		})
-	</script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('#image').cropper({
+        aspectRatio: 4 / 3,
+      });
+
+      $("#file-input").on('change',function() {
+        var files = $("#file-input").prop('files');
+        var file = files[0];
+        if (file == null) {
+          return alert('No file selected.');
+        }
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          $('#image').cropper('replace', e.target.result);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      $('#crop-upload').on('click',function(){
+        var croppedImgURI = $('#image').cropper('getCroppedCanvas', {width: 800,}).toDataURL('image/jpeg');
+        var croppedImgFile = dataURItoBlob(croppedImgURI);
+        getSignedRequest(croppedImgFile);
+      });
+
+      $("#submit-button").on('click',function(){
+        $("#add-listing-form").submit();
+      });
+    });
+
+    function dataURItoBlob(dataURI) {
+      var binary = atob(dataURI.split(',')[1]);
+      var array = [];
+      for(var i = 0; i < binary.length; i++) {
+          array.push(binary.charCodeAt(i));
+      }
+      return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
+    }
+
+    function getSignedRequest(file){
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', `/sign-s3?file-name=${file.name}&file-type=${file.type}`);
+      xhr.onreadystatechange = () => {
+        if(xhr.readyState === 4){
+          if(xhr.status === 200){
+            const response = JSON.parse(xhr.responseText);
+            uploadFile(file, response.signedRequest, response.url);
+          }
+          else{
+            alert('Could not get signed URL.');
+          }
+        }
+      };
+      xhr.send();
+    }
+
+    function uploadFile(file, signedRequest, url){
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', signedRequest);
+      xhr.onreadystatechange = () => {
+        if(xhr.readyState === 4){
+          if(xhr.status === 200){
+            document.getElementById('preview').src = url;
+            document.getElementById('image-url-input').value = url;
+          }
+          else{
+            alert('Could not upload file.');
+          }
+        }
+      };
+      xhr.send(file);
+    }
+  </script>
 
 </body>
 </html>

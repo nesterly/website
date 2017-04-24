@@ -70,11 +70,16 @@
       }
       #apply-filter {
         display: inline-block;
-        padding: 5px;
         margin-left: 20px;
-        border-radius: 5px;
+        padding: 5px;
+        color: #4da6ff;
         border: solid #4da6ff 1px;
+        border-radius: 5px;
         cursor: pointer;
+      }
+      #apply-filter:hover {
+        color: white;
+        background-color: #4da6ff;      
       }
       #filters {
         background-color: white;
@@ -152,6 +157,7 @@
                   <li><a id="walk">Walking</a></li>
                   <li><a id="bike">Biking</a></li>
                   <li><a id="drive">Driving</a></li>
+                  <li><a id="transit">Public Transit</a></li>
                 </ul>
               </div>
               <input id="distance" data-slider-id='distSlider' type="text" data-slider-min="0" data-slider-max="{{maxDist}}" data-slider-step="1" data-slider-value="{{maxDist}}"/> <div id="show-dist">{{maxDist}} min</div>
@@ -172,7 +178,7 @@
             {{#each listingSummaries}}
               <div class="col-md-6 img-portfolio" id="{{id}}">
       					<a href="">
-      					  <img class="img-responsive img-hover" src="http://placehold.it/700x400" alt="">
+      					  <img class="img-responsive img-hover" src="{{imageUrl}}" alt="">
       					</a>
       					<h3>
       					  <a href="">{{title}}</a>
@@ -187,7 +193,9 @@
                 summary.walk = "{{walk}}";
                 summary.drive = "{{drive}}";
                 summary.bike = "{{bike}}";
+                summary.transit = "{{transit}}";
                 summary.price = "{{price}}";
+                summary.imageUrl = "{{imageUrl}}";
                 listingSummaries.push(summary);               
               </script>
             {{/each}}
