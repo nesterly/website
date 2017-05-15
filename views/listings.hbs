@@ -41,7 +41,6 @@
     <script type="text/javascript" src="javascripts/listings.js"></script>
 
     <script type="text/javascript">
-      var listingSummaries = [];
       var maxWalk = parseInt("{{maxWalk}}");
     </script>
 
@@ -174,35 +173,9 @@
           <!-- /Filters -->
 
           <!-- Listings -->
-          <div id="listings" style="position:relative;top:120px;">
-            {{#each listingSummaries}}
-              <div class="col-md-6 img-portfolio" id="{{id}}">
-      					<a href="">
-      					  <img class="img-responsive img-hover" src="{{imageUrl}}" alt="">
-      					</a>
-      					<h3>
-      					  <a href="">{{title}}</a>
-      					</h3>
-      					<p>{{descShort}}</p>
-              </div>
-              <script type="text/javascript">
-                var summary = {};
-                summary.id = "{{id}}";
-                summary.title = "{{title}}";
-                summary.descShort = "{{descShort}}";
-                summary.walk = "{{walk}}";
-                summary.drive = "{{drive}}";
-                summary.bike = "{{bike}}";
-                summary.transit = "{{transit}}";
-                summary.price = "{{price}}";
-                summary.imageUrl = "{{imageUrl}}";
-                summary.stayMin = "{{stayMin}}";
-                summary.stayMax = "{{stayMax}}";
-                listingSummaries.push(summary);               
-              </script>
-            {{/each}}
-          </div>
+          <div id="listings" style="position:relative;top:120px;"></div>
           <!-- /Listings -->
+          
         </div>
         <!-- /Left Column -->
 

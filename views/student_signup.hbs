@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+	<title>
+		Nesterly | Sign Up
+	</title>
+
+	<style>
+		body {
+		  font-family: "Lucida Grande";
+		}
+		h1 {
+		  font-size: 2.5vw;
+		  color: white;
+		  text-align: center;
+		}
+		form {
+			margin: auto;
+		  text-align: left;
+		}
+		.form-header {
+			width: 100%;
+			background-color: #95a5a6;
+		}
+		.form-title {
+		  width: 28%;
+		  padding-left: 1%;
+		  display: inline-block;
+		  background-color: #3498db;
+		  color: white;
+		}
+		textarea {
+			width: 70%;
+			vertical-align: top;
+		}
+    #phone-area-input, #phone-prefix-input {
+      width: 3em;
+    }
+    #phone-line-input {
+      width: 4em;
+    }
+    #major-input, #skills-input {
+      vertical-align: top;
+    }
+    #language-choices {
+      display: inline-block;
+      width: 70%;
+      vertical-align: top;     
+    }
+    #image-upload {
+      margin-left: 29%;
+    }
+    #preview {
+      height: 200px;
+      width: 200px;
+      border: solid #4da6ff 1px;
+    }
+		#submit-button {
+			margin: auto;
+			text-align: center;
+			width: 200px;
+			height: 40px;
+			font-size: 30px;
+			color: #3498db;
+			border-style: solid;
+			border-width: 2px;
+			border-color: #3498db;
+			border-radius: 10px;
+			cursor: pointer;
+		}
+		#submit-button:hover {
+			color: white;
+			background-color: #3498db; 			
+		}
+    #image {
+      max-width: 100%; /* This rule is very important, please do not ignore this! */
+    }
+    #wrapper {
+      width: 400px;
+    }
+    #crop-upload {
+      text-align: center;
+      width: 200px;
+      height: 26px;
+      font-size: 20px;
+      color: #3498db;
+      border-style: solid;
+      border-width: 2px;
+      border-color: #3498db;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    #crop-upload:hover {
+      color: white;
+      background-color: #3498db;      
+    }
+	</style>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+  <link  href="stylesheets/cropper.css" rel="stylesheet">
+  <script src="javascripts/cropper.js"></script>
+
+</head>
+<body>
+
+	<form id="sign-up-form" method="post" action="/create_student_account">
+
+	<div class="form-header"><h1>About You</h1></div>
+
+    <div class="form-title">First Name: </div>
+    <input id="first-name-input" type="text" name="first_name" placeholder="Tim">
+    <br><br> 
+
+    <div class="form-title">Last Name: </div>
+    <input id="last-name-input" type="text" name="last_name" placeholder="Beaver">
+    <br><br>    
+    
+    <div class="form-title">Email: </div>
+    <input id="email-input" type="text" name="email" placeholder="tim">
+    <span>@mit.edu</span>
+    <br><br>
+
+    <div class="form-title">Password: </div>
+    <input id="password-input" type="password" name="password" placeholder="password">
+    <br><br>
+
+    <div class="form-title">Phone Number: </div>
+    <input id="phone-area-input" type="number" name="phone_area" placeholder="xxx">
+    <span>-</span>
+    <input id="phone-prefix-input" type="number" name="phone_prefix" placeholder="xxx">
+    <span>-</span>
+    <input id="phone-line-input" type="number" name="phone_line" placeholder="xxxx">
+    <br><br>
+
+    <div class="form-title">Academic Institution: </div>
+    <select id="school-input" name="school">
+      <option val="MIT">MIT (Massachusetts Institute of Technology)</option>
+    </select>
+    <br><br>
+
+    <div class="form-title">Degree: </div>
+    <select id="degree-input" name="degree">
+      <option val="associate">Associate</option>
+      <option val="bachelors" selected>Bachelor's</option>
+      <option val="masters">Master's</option>
+      <option val="doctoral">Doctoral</option>
+      <option val="postdoctoral">Postdoctoral</option>
+      <option val="others">Others</option>
+    </select>
+    <br><br>
+
+    <div class="form-title">Major(s): </div>
+    <select multiple id="major-input" name="major" size="5"></select>
+    <br><br>
+
+    <div class="form-title">Birthdate: </div>
+    <select id="birth-m-input" name="birth_m" placeholder="Month">
+      <option value="" disabled selected>Month</option>
+    </select>
+    <span>/</span>
+    <select id="birth-d-input" name="birth_d">
+      <option value="" disabled selected>Day</option>
+    </select>
+    <span>/</span>
+    <select id="birth-y-input" name="birth_y">
+      <option value="" disabled selected>Year</option>
+    </select>
+    <br><br>
+
+    <div class="form-title">Profile Image: </div>
+    <input type="file" id="file-input">
+    <div id="image-upload">
+      <div id="wrapper">
+        <img id="image" src="images/crop-default.png">
+      </div>
+      <div id="crop-upload">
+        Crop and Upload
+      </div>
+      <img id="preview" src="images/preview.png">
+    </div>
+    <input type="hidden" id="image-url-input" name="image_url" value="">
+    <br><br>  
+
+    <div class="form-title">Typically Sleep around: </div> 
+    <select id="sleep-time-input" name="sleep_time"></select>
+    <br><br>
+
+    <div class="form-title">Typically Wake Up at: </div>
+    <select id="wake-time-input" name="wake_time"></select>
+    <br><br>
+
+    <div class="form-title">Language Spoken: </div>
+    <div id="language-choices">
+    </div>
+    <br><br>
+
+    <div class="form-title">Self Introduction: </div>
+    <textarea id="self-intro-input" form="sign-up-form" name="self_intro" placeholder="Introduce yourself..."></textarea>
+    <br><br>
+
+    <div class="form-title">Interests and Hobbies: </div>
+    <textarea id="interests-input" form="sign-up-form" name="interests" placeholder="List your interests and hobbies..."></textarea>
+    <br><br>
+
+    <div class="form-title">Skills (Preferred Tasks): </div>
+    <select multiple id="skills-input" name="skills" size="5"></select>
+    <br><br>
+
+    <div class="form-title">Typical schedule: </div>
+    <textarea id="schedule-input" form="sign-up-form" name="schedule" placeholder="Describe your typical schedule..."></textarea>
+    <br><br>
+
+    <div class="form-title">Deal Breakers: </div>
+    <textarea id="deal-breakers-input" form="sign-up-form" name="deal_breakers" placeholder="List your deal breakers..."></textarea>
+    <br><br>
+
+    <div class="form-title">Pet Peeves: </div>
+    <textarea id="pet-peeves-input" form="sign-up-form" name="pet_peeves" placeholder="List your pet peeves..."></textarea>
+    <br><br>
+
+    <div class="form-title">Budget: </div>
+    <span>$</span>
+    <input id="budget-input" type="number" name="budget" value="2000">
+    <br><br> 
+
+    <div style="width: 100%">
+    	<div id="submit-button">Create</div>
+    </div>
+	</form>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+
+      var majors = {
+        "1": "Civil Engineering",
+        "2": "Mechanical Engineering",
+        "3": "Material Science",
+        "4": "Architecture",
+        "5": "Chemistry",
+        "6-1": "Electrical Engineering",
+        "6-3": "Computer Science",
+        "7": "Biology",
+        "8": "Physics",
+        "9": "Brain and Cognitive Science",
+        "10": "Chemical Engineering",
+        "11": "Urban Studies and Planning",
+        "12": "Earth, Atmospheric, and Planetary Science",
+        "13": "Ocean Engineering",
+        "14": "Economics",
+        "15-1": "Management",
+        "15-2": "Business",
+        "15-3": "Finance",
+        "16": "Aerospace Engineering",
+        "17": "Political Science",
+        "18": "Mathematics",
+        "20": "Biological Engineering",
+        "21A": "Anthropology",
+        "CMS": "Comparative Media Studies/Writing",
+        "21G": "Global Studies and Languages",
+        "21H": "History",
+        "21L": "Literature",
+        "21M": "Music and Theater Arts",
+        "STS": "Science, Technology, and Society",
+        "WGS": "Women's and Gender Studies",
+        "22": "Nuclear Science and Engineering",
+        "24": "Linguistics and Philosophy",
+      }
+
+      var languages = [
+        "English",
+        "Spanish",
+        "Chinese",
+        "Tagalog",
+        "Vietnamese",
+        "French",
+        "German",
+        "Korean",
+        "Arabic",
+        "Italian",
+        "Portugese",
+        "Hindi",
+        "Polish",
+        "Japanese",
+      ]
+
+      var skills = {
+        "0": "Walking a dog",
+        "1": "Cooking",
+        "2": "Using handtools",
+        "3": "Working in a garage",
+        "4": "Taking out trash",
+        "5": "Watering plants",
+        "6": "Feeding pets",
+      }
+
+      for (var major of Object.keys(majors)) {
+        $('<option>').text(majors[major]).attr('value',major).appendTo('#major-input');
+      }
+
+      for (var m = 1; m <= 12; m++) {
+        $('<option>').text(m).attr('value',m).appendTo('#birth-m-input');
+      }
+
+      for (var d = 1; d <= 31; d++) {
+        $('<option>').text(d).attr('value',d).appendTo('#birth-d-input');
+      }
+
+      var currYear = 1900 + (new Date).getYear();
+      for (var y = currYear - 18; y >= currYear - 100; y--) {
+        $('<option>').text(y).attr('value',y).appendTo('#birth-y-input');
+      }
+
+      for (var h = 0; h < 24; h++) {
+        var suffix;
+        if (h < 12) {
+          suffix = "am";
+        } else {
+          suffix = "pm";
+        }
+        $('<option>').text(((h-1)%12+1)+suffix).attr('value',h).appendTo('#sleep-time-input');
+        $('<option>').text(((h-1)%12+1)+suffix).attr('value',h).appendTo('#wake-time-input');
+      }
+      $('#sleep-time-input').val(23);
+      $('#wake-time-input').val(8);
+
+      for (var language of languages) {
+        var wrapper = $('<div style="display:inline-block;padding:2px;">');
+        wrapper.appendTo('#language-choices');
+        $('<input type="checkbox" name="language">').attr('id',"language-"+language.toLowerCase()).attr('value',language.toLowerCase()).appendTo(wrapper);
+        $('<label>').text(language).attr('for',"language-"+language.toLowerCase()).appendTo(wrapper);
+      }
+
+      var wrapper = $('<div style="display:inline-block;padding:2px;">');
+      wrapper.appendTo('#language-choices');
+      $('<input type="checkbox" name="language">').attr('id','language-other').attr('value',"other").appendTo(wrapper);      
+      $('<label>').text("Other:").attr('for',"language-other").appendTo(wrapper);
+      $('<input type="text" id="language-other-disc" name="language_other">').appendTo(wrapper); 
+
+      for (var skill of Object.keys(skills)) {
+        $('<option>').text(skills[skill]).attr('value',skill).appendTo('#skills-input');       
+      }      
+
+      $('#image').cropper({
+        aspectRatio: 1 / 1,
+      });
+
+      $("#file-input").on('change',function() {
+        var files = $("#file-input").prop('files');
+        var file = files[0];
+        if (file == null) {
+          return alert('No file selected.');
+        }
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          $('#image').cropper('replace', e.target.result);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      $('#crop-upload').on('click',function(){
+        var croppedImgURI = $('#image').cropper('getCroppedCanvas', {width: 800,}).toDataURL('image/jpeg');
+        var croppedImgFile = dataURItoBlob(croppedImgURI);
+        getSignedRequest(croppedImgFile);
+      });
+
+      $("#submit-button").on('click',function(){
+        $("#sign-up-form").submit();
+      });
+    });
+
+    function dataURItoBlob(dataURI) {
+      var binary = atob(dataURI.split(',')[1]);
+      var array = [];
+      for(var i = 0; i < binary.length; i++) {
+          array.push(binary.charCodeAt(i));
+      }
+      return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
+    }
+
+    function getSignedRequest(file){
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', `/sign-s3?file-name=${file.name}&file-type=${file.type}`);
+      xhr.onreadystatechange = () => {
+        if(xhr.readyState === 4){
+          if(xhr.status === 200){
+            const response = JSON.parse(xhr.responseText);
+            uploadFile(file, response.signedRequest, response.url);
+          }
+          else{
+            alert('Could not get signed URL.');
+          }
+        }
+      };
+      xhr.send();
+    }
+
+    function uploadFile(file, signedRequest, url){
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', signedRequest);
+      xhr.onreadystatechange = () => {
+        if(xhr.readyState === 4){
+          if(xhr.status === 200){
+            document.getElementById('preview').src = url;
+            document.getElementById('image-url-input').value = url;
+          }
+          else{
+            alert('Could not upload file.');
+          }
+        }
+      };
+      xhr.send(file);
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+	<title>
+		Nesterly | Create Listing
+	</title>
+
+	<style>
+		body {
+		  font-family: "Lucida Grande";
+		}
+		h1 {
+		  font-size: 2.5vw;
+		  color: white;
+		  text-align: center;
+		}
+		form {
+			margin: auto;
+		  text-align: left;
+		}
+		.form-header {
+			width: 100%;
+			background-color: #95a5a6;
+		}
+		.form-title {
+		  width: 28%;
+		  padding-left: 1%;
+		  display: inline-block;
+		  background-color: #3498db;
+		  color: white;
+		}
+		input {
+			width: 70%;
+			vertical-align: top;
+		}
+		.submit-button {
+			margin: auto;
+			text-align: center;
+			width: 200px;
+			height: 40px;
+			font-size: 30px;
+			color: #3498db;
+			border-style: solid;
+			border-width: 2px;
+			border-color: #3498db;
+			border-radius: 10px;
+			cursor: pointer;
+		}
+		.submit-button:hover {
+			color: white;
+			background-color: #3498db; 			
+		}
+	</style>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+</head>
+<body>
+	<form id="sign-in-form" method="post" action="/auth_account">
+		<div class="form-header"><h1>Sign In to your Account</h1></div>
+    
+    <div class="form-title">Email: </div>
+    <input id="signin-email-input" type="text" name="email" placeholder="Enter your email.">
+    <br><br>
+
+    <div class="form-title">Password: </div>
+    <input id="signin-password-input" type="password" name="password" placeholder="Enter your password.">
+    <br><br>
+
+    <div style="width: 100%">
+    	<div id="sign-in" class="submit-button">Sign In</div>
+    </div>
+	</form>
+
+<!-- 	<form id="sign-up-form" method="post" action="/create_account">
+		<div class="form-header"><h1>-or- Create a New Account</h1></div>
+
+		<div class="form-title">Display Name: </div>
+    <input id="display-name-input" type="text" name="name" placeholder="Enter your email.">
+    <br><br>		
+    
+    <div class="form-title">Email: </div>
+    <input id="signup-email-input" type="text" name="email" placeholder="Enter your email.">
+    <br><br>
+
+    <div class="form-title">Password: </div>
+    <input id="signup-password-input" type="password" name="password" placeholder="Enter your password.">
+    <br><br>
+
+    <div style="width: 100%">
+    	<div id="create-account" class="submit-button">Create</div>
+    </div>
+	</form>
+ -->
+	<script type="text/javascript">
+    $(document).ready(function() {
+      // $("#create-account").on('click',function(){
+      //   $("#sign-up-form").submit();
+      // });
+      $("#sign-in").on('click',function(){
+        $("#sign-in-form").submit();
+      });
+    });
+  </script>
+</body>
+</html>

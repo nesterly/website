@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var firebase = require("firebase");
+var firebaseAdmin = require("firebase-admin");
 var firebaseConfig;
 
 var aws = require('aws-sdk');
@@ -28,23 +29,218 @@ if (process.env.NODE_ENV) {
 	  storageBucket: config.firebase.storageBucket,
 	  messagingSenderId: config.firebase.messagingSenderId
 	};
+
 	AWS_ACCESS_KEY_ID = config.s3.AWS_ACCESS_KEY_ID;
 	AWS_SECRET_ACCESS_KEY = config.s3.AWS_SECRET_ACCESS_KEY;
 	S3_BUCKET = config.s3.S3_BUCKET;
+
+	var serviceAccount = require("../serviceAccountKey.json");
+	firebaseAdmin.initializeApp({
+	  credential: firebaseAdmin.credential.cert(serviceAccount),
+	  databaseURL: "https://nesterly-website.firebaseio.com"
+	});
 }
 
 firebase.initializeApp(firebaseConfig);
 var database = firebase.database();
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Handle GET requests for rendering pages, signing S3 URL, etc.
+/////////////////////////////////////////////////////////////////////////////////////
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('home');
 });
 
-router.get('/154bkj372bfme_ab16', function(req, res, next) {
+/* GET student sign up page. */
+router.get('/student_signup', function(req, res, next) {
+	res.render('student_signup');
+});
+
+/* GET host sign up page. */
+router.get('/host_signup', function(req, res, next) {
+	res.render('host_signup');
+});
+
+/* GET sign in page. */
+router.get('/sign_in', function(req, res, next) {
+	res.render('sign_in');
+});
+
+/* GET listing creation page. */
+router.get('/create_listing', function(req, res, next) {
   res.render('create_listing');
 });
 
+router.get('/sign-s3', (req, res) => {
+  var s3 = new aws.S3({accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY});
+  var fileType = req.query['file-type'];
+  var userID = "nesterly-admin";
+  var timestamp = new Date().getTime();
+  var suffix = Math.floor(Math.random()*400); 
+  var fileName = userID+"-"+timestamp+"-"+suffix;
+  var s3Params = {
+    Bucket: S3_BUCKET,
+    Key: fileName,
+    Expires: 60,
+    ContentType: fileType,
+    ACL: 'public-read'
+  };
+
+  s3.getSignedUrl('putObject', s3Params, (err, data) => {
+    if(err){
+      console.log(err);
+      return res.end();
+    };
+    var returnData = {
+      signedRequest: data,
+      url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
+    };
+    res.write(JSON.stringify(returnData));
+    res.end();
+  });
+});
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Handle POST requests for creating user accounts, listings, etc.
+/////////////////////////////////////////////////////////////////////////////////////
+
+/* POST create student account. */
+router.post('/create_student_account', function(req, res, next) {
+	firebaseAdmin.auth().createUser({
+	  email: req.body.email + "@mit.edu",
+	  emailVerified: false,
+	  password: req.body.password,
+	  displayName: req.body.first_name + " " + req.body.last_name,
+	  disabled: false
+	})
+	  .then(function(userRecord) {
+
+	    var language = req.body.language;
+			if (!language) {
+				language = [];
+			} else {
+				var languageOther = language.indexOf("other");
+				if (languageOther !== -1) {
+					language[languageOther] = req.body.language_other;
+				}
+			}
+
+	    var newGuest = {
+	    	firstName: req.body.first_name,
+				lastName: req.body.last_name,
+				email: req.body.email,
+				phone: [
+					req.body.phone_area,
+					req.body.phone_prefix,
+					req.body.phone_line
+				],
+				school: req.body.school,
+				degree: req.body.degree,
+				major: req.body.major,
+				birthDate: [
+					req.body.birth_m,
+					req.body.birth_d,
+					req.body.birth_y
+				],
+				imageUrl: req.body.image_url,
+				sleepTime: req.body.sleep_time,
+				wakeTime: req.body.wake_time,
+				schedule: req.body.schedule,
+				language: language,
+				selfIntro: req.body.self_intro,
+				interests: req.body.interests,
+				skills: req.body.skills,
+				dealBreakers: req.body.deal_breakers,
+				petPeeves: req.body.pet_peeves,
+				budget: req.body.budget,
+			}
+
+			addGuest(userRecord.uid, newGuest);
+		  res.redirect('sign_in');
+	  })
+	  .catch(function(error) {
+	    res.send("Error creating new user:", error);
+	  });
+});
+
+/* POST create host account. */
+router.post('/create_host_account', function(req, res, next) {
+	firebaseAdmin.auth().createUser({
+	  email: req.body.email,
+	  emailVerified: false,
+	  password: req.body.password,
+	  displayName: req.body.first_name + " " + req.body.last_name,
+	  disabled: false
+	})
+	  .then(function(userRecord) {
+
+	    var language = req.body.language;
+			if (!language) {
+				language = [];
+			} else {
+				var languageOther = language.indexOf("other");
+				if (languageOther !== -1) {
+					language[languageOther] = req.body.language_other;
+				}
+			}
+
+	    var newHost = {
+	    	firstName: req.body.first_name,
+				lastName: req.body.last_name,
+				email: req.body.email,
+				phone: [
+					req.body.phone_area,
+					req.body.phone_prefix,
+					req.body.phone_line
+				],
+				jobType: req.body.job_type,
+				employer: req.body.employer,
+				birthDate: [
+					req.body.birth_m,
+					req.body.birth_d,
+					req.body.birth_y
+				],
+				imageUrl: req.body.image_url,
+				sleepTime: req.body.sleep_time,
+				wakeTime: req.body.wake_time,
+				schedule: req.body.schedule,
+				language: language,
+				selfIntro: req.body.self_intro,
+				dealBreakers: req.body.deal_breakers,
+				petPeeves: req.body.pet_peeves,
+			}
+
+			addHost(userRecord.uid, newHost);
+		  res.redirect('sign_in');
+	  })
+	  .catch(function(error) {
+	    res.send("Error creating new user:", error);
+	  });
+});
+
+/* POST authenticate user. */
+router.post('/auth_account', function(req, res, next) {
+	var email = req.body.email;
+	var password = req.body.password;
+
+	firebase.auth().signInWithEmailAndPassword(email, password)
+		.then(function() {
+			console.log("Current user is:", firebase.auth().currentUser.uid);
+
+			res.send("Success!");
+		})
+		.catch(function(error) {
+		  var errorCode = error.code;
+		  var errorMessage = error.message;
+	  	
+	  	console.log(error);
+	  	res.send("Error");
+		});
+});
+
+/* POST create a new listing. */
 router.post('/add_listing', function(req, res, next) {
 
 	var bldgType;
@@ -65,9 +261,9 @@ router.post('/add_listing', function(req, res, next) {
 	if (!furniture) {
 		furniture = [];
 	} else {
-		var furniture_other = furniture.indexOf("other");
-		if (furniture_other !== -1) {
-			furniture[furniture_other] = req.body.furniture_other;
+		var furnitureOther = furniture.indexOf("other");
+		if (furnitureOther !== -1) {
+			furniture[furnitureOther] = req.body.furniture_other;
 		} 
 	}
 
@@ -75,9 +271,9 @@ router.post('/add_listing', function(req, res, next) {
 	if (!amenities) {
 		amenities = [];
 	} else {
-		var amenities_other = amenities.indexOf("other");
-		if (amenities_other !== -1) {
-			amenities[amenities_other] = req.body.amenities_other;
+		var amenitiesOther = amenities.indexOf("other");
+		if (amenitiesOther !== -1) {
+			amenities[amenitiesOther] = req.body.amenities_other;
 		} 
 	}
 
@@ -85,9 +281,9 @@ router.post('/add_listing', function(req, res, next) {
 	if (!shared) {
 		shared = [];
 	} else {
-		var shared_other = shared.indexOf("other");
-		if (shared_other !== -1) {
-			shared[shared_other] = req.body.shared_other;
+		var sharedOther = shared.indexOf("other");
+		if (sharedOther !== -1) {
+			shared[sharedOther] = req.body.shared_other;
 		} 
 	}
 	
@@ -123,24 +319,49 @@ router.post('/add_listing', function(req, res, next) {
     price: req.body.price,
   };
 
-  var result = addListing(newListing);
-  res.redirect('154bkj372bfme_ab16');
+  addListing(newListing);
+  res.redirect('listings');
 });
 
-router.get('/278hnf2736jgi_hr25', function(req, res, next) {
-	var listingsInfo = [];
+/* GET listings page. */
+router.get('/listings',function(req, res, next) {
 	var ref = database.ref("/listings/");
 	ref.once('value').then(function(snapshot) {
 		var listings = snapshot.val();
 		var listingKeys = Object.keys(listings);
+		var walks = [];
+		var bikes = [];
+		var drives = [];
+		var transits = [];
+		var prices = [];
 		for (var key of listingKeys) {
-			listingsInfo.push(listings[key]);
+			info = listings[key];
+			walks.push(info.walk);
+			bikes.push(info.bike);
+			drives.push(info.drive);
+			transits.push(info.transit);
+			prices.push(info.price);
 		}
-		res.send(listingsInfo);
+		var maxWalk = Math.max.apply(null,walks);
+		var maxBike = Math.max.apply(null,bikes);
+		var maxDrive = Math.max.apply(null,drives);
+		var maxTransit = Math.max.apply(null,transits);
+		var minPrice = Math.min.apply(null,prices);
+		var maxPrice = Math.max.apply(null,prices);
+		res.render('listings',{
+			maxWalk: maxWalk,
+			maxBike: maxBike,
+			maxDrive: maxDrive,
+			maxTransit: maxTransit,
+			maxDist: Math.max.apply(null,[maxWalk,maxBike,maxDrive,maxTransit]),
+			minPrice: minPrice,
+			maxPrice: maxPrice,
+		});
 	});
 });
 
-router.get('/listings',function(req, res, next) {
+/* GET API for listings */
+router.get('/listings_info',function(req, res, next) {
 	var ref = database.ref("/listings/");
 	ref.once('value').then(function(snapshot) {
 		var listings = snapshot.val();
@@ -179,8 +400,8 @@ router.get('/listings',function(req, res, next) {
 		var maxTransit = Math.max.apply(null,transits);
 		var minPrice = Math.min.apply(null,prices);
 		var maxPrice = Math.max.apply(null,prices);
-		res.render('listings',{
-			listingSummaries: summaries,
+		var listingsInfo = {
+			summaries: summaries,
 			maxWalk: maxWalk,
 			maxBike: maxBike,
 			maxDrive: maxDrive,
@@ -188,10 +409,12 @@ router.get('/listings',function(req, res, next) {
 			maxDist: Math.max.apply(null,[maxWalk,maxBike,maxDrive,maxTransit]),
 			minPrice: minPrice,
 			maxPrice: maxPrice,
-		});
+		};
+		res.json(listingsInfo);
 	});
 });
 
+/* GET geoJSON API for listings map */
 router.get('/listings_geo',function(req, res, next) {
 	var ref = database.ref("/listings/");
 	ref.once("value").then(function(snapshot) {
@@ -212,42 +435,29 @@ router.get('/listings_geo',function(req, res, next) {
 	});
 });
 
-router.get('/sign-s3', (req, res) => {
-  var s3 = new aws.S3({accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY});
-  var fileType = req.query['file-type'];
-  var userID = "nesterly-admin";
-  var timestamp = new Date().getTime();
-  var suffix = Math.floor(Math.random()*400); 
-  var fileName = userID+"-"+timestamp+"-"+suffix;
-  var s3Params = {
-    Bucket: S3_BUCKET,
-    Key: fileName,
-    Expires: 60,
-    ContentType: fileType,
-    ACL: 'public-read'
-  };
+/////////////////////////////////////////////////////////////////////////////////////
+// Helper functions
+/////////////////////////////////////////////////////////////////////////////////////
 
-  s3.getSignedUrl('putObject', s3Params, (err, data) => {
-    if(err){
-      console.log(err);
-      return res.end();
-    }
-    var returnData = {
-      signedRequest: data,
-      url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
-    };
-    res.write(JSON.stringify(returnData));
-    res.end();
-  });
-});
+/* Add new guest to firebase DB. */
+function addGuest(userID, guestData) {
+  var updates = {};
+  updates['/guests/' + userID] = guestData;
+  return firebase.database().ref().update(updates);
+}
 
+/* Add new host to firebase DB. */
+function addHost(userID, hostData) {
+  var updates = {};
+  updates['/hosts/' + userID] = hostData;
+  return firebase.database().ref().update(updates);
+}
+
+/* Add new listing to firebase DB. */
 function addListing(listingData) {
-
   var newListingKey = firebase.database().ref().child('listings').push().key;
-
   var updates = {};
   updates['/listings/' + newListingKey] = listingData;
-
   return firebase.database().ref().update(updates);
 }
 

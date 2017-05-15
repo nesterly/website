@@ -1,10 +1,19 @@
 $(document).ready(function(){
 
-  var all_listings = [];
-  $('#listings div').each(function(){
-    all_listings.push($(this).attr('id'));
+  var listingSummaries;
+  $.getJSON("/listings_info",function(data){
+    listingSummaries = data.summaries;
+    var listings = [];
+    for (var summary of listingSummaries) {
+      listings.push(summary.id);
+      var wrapper = $('<div class="col-md-6 img-portfolio">').attr('id',summary.id);
+      $('<img class="img-responsive img-hover">').attr('src',summary.imageUrl).appendTo(wrapper);
+      $('<h3>').text(summary.title).appendTo(wrapper);
+      $('<p>').text(summary.descShort).appendTo(wrapper);
+      wrapper.appendTo('#listings'); 
+    };
+    updateMap(listings);
   });
-  updateMap(all_listings);
 
   $("#transportation li a").on('click',function(event){
     $("#selected-mot").attr('rel',$(this).attr('id'));
@@ -31,19 +40,19 @@ $(document).ready(function(){
   });
 
   function filter(dist,distType,priceL,priceH,duration) {
-    var visible_listings = []; 
+    var visibleListings = []; 
     for (var summary of listingSummaries) {
       if (summary[distType] <= dist && summary.price >= priceL && summary.price <= priceH 
-        && ((summary.stayMin <= duration && duration <= summary.stayMax) || duration <= 0)) {
+        && ((summary.stayMin <= duration && duration <= summary.stayMax) || duration === 0)) {
         $("#"+summary.id).removeClass('hidden');
-        visible_listings.push(summary.id);
+        visibleListings.push(summary.id);
       } else {
         $("#"+summary.id).addClass('hidden');
       }
     }
     $(".img-portfolio").removeClass("listing-selected");
     map.removeLayer(homePoints);
-    updateMap(visible_listings);
+    updateMap(visibleListings);
   }
 
   // Web map code
@@ -65,16 +74,16 @@ $(document).ready(function(){
   });
 
   // Null variable that will hold our data
-  var homePoints = null;
+  var homePoints;
 
   /* Add visible homes to the map */
-  function updateMap(visible_listings) {
+  function updateMap(visibleListings) {
 
     // Add homes to map
     $.getJSON("/listings_geo",function(data){
       homePoints = L.geoJson(data,{
         pointToLayer: function (feature, latlng) {
-          if (visible_listings.includes(feature.properties.id)) { 
+          if (visibleListings.includes(feature.properties.id)) { 
             return L.marker(latlng, {icon: home_icon});
           }
         },
