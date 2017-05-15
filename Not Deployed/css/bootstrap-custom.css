@@ -11,6 +11,18 @@ body {
     height: 100%;
 }
 
+h3{
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 5px;
+  margin-bottom: 0px;
+}
+
+a {
+  color: #5ebdeb;
+  
+}
+
 .container {
   padding-right: 15px;
   padding-left: 15px;
@@ -36,20 +48,25 @@ body {
 
 .navbar {
     margin-bottom: 0px;
+    box-shadow: 0px -10px 30px #888888;
+}
+
+.navbar-brand {
+    padding-top: 5px;
 }
 
 .navbar-inverse {
   background-color: #fff;
-  border-color: #f1f1f1;
+  border: 0;
 }
 
 .navbar-inverse .navbar-nav > li > a {
-  color: #4da6ff;
+  color: #000000;
 }
 .navbar-inverse .navbar-nav > li > a:hover,
 .navbar-inverse .navbar-nav > li > a:focus {
   color: #fff;
-  background-color: #4da6ff;
+  background-color: #5ebdeb;
 }
 
 body {
@@ -139,4 +156,12 @@ footer {
     header.carousel .carousel {
         height: 70%;
     }
+}
+
+.slider .slider-selection {
+  background: #9dcfe8;
+}
+
+.slider .slider-handle {
+  background: #5ebdeb;
 }

@@ -11,6 +11,17 @@ body {
     height: 100%;
 }
 
+h3{
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 5px;
+  margin-bottom: 0px;
+}
+
+a {
+  color: #5ebdeb;
+}
+
 .container {
   padding-right: 15px;
   padding-left: 15px;
@@ -36,20 +47,28 @@ body {
 
 .navbar {
     margin-bottom: 0px;
+    -moz-box-shadow: 0px -10px 30px #888888;
+    -webkit-box-shadow: 0px -15px 30px #888888;
+    box-shadow: 0px -10px 30px #888888;
+}
+
+.navbar-brand {
+    padding-top: 5px;
 }
 
 .navbar-inverse {
   background-color: #fff;
-  border-color: #f1f1f1;
+  border: 0;
 }
 
 .navbar-inverse .navbar-nav > li > a {
-  color: #4da6ff;
+  color: #333333;
 }
+
 .navbar-inverse .navbar-nav > li > a:hover,
 .navbar-inverse .navbar-nav > li > a:focus {
   color: #fff;
-  background-color: #4da6ff;
+  background-color: #5ebdeb;
 }
 
 body {
@@ -81,6 +100,24 @@ header.carousel .fill {
     height: 100%;
     background-position: center;
     background-size: cover;
+}
+
+.col-md-6.map {
+  padding: 0px;
+}
+
+#filters.affix.col-md-6 {
+  width: calc(50% - 20px);
+}
+
+@media(max-width:991px) {
+  #filters.affix.col-md-6 {
+    width: calc(100% - 20px);
+  }
+}
+
+.col-md-6.img-portfolio {
+  padding-left: 15px;
 }
 
 /* map div styles */
