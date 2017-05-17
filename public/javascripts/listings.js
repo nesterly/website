@@ -12,6 +12,7 @@ $(document).ready(function(){
   $.getJSON("/listings_info",function(data){
     var listings = [];
     listingSummaries = data;
+    
     for (var summary of data) {
       listings.push(summary.id);
       maxWalk = Math.max(maxWalk,summary.walk);
