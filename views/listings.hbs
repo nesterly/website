@@ -37,12 +37,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.3/leaflet.js"></script>
     <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 
+    <!-- Slider plugin scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/bootstrap-slider.js">
+    </script>
+
     <!-- Custom JS -->
     <script type="text/javascript" src="javascripts/listings.js"></script>
-
-    <script type="text/javascript">
-      var maxWalk = parseInt("{{maxWalk}}");
-    </script>
 
     <!-- Custom styles -->
     <style>
@@ -72,19 +72,26 @@
       }
       .img-portfolio {
       	padding-top: 10px;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+        cursor: pointer;
+      }
+      #apply-filter, .read-more {
+        padding: 5px;
+        color: white;
+        background-color: #5ebdeb;   
+        border: solid #5ebdeb 1px;
+        border-radius: 5px;
+        text-align: center; 
+        cursor: pointer;
       }
       #apply-filter {
         display: inline-block;
-        margin-left: 20px;
-        padding: 5px;
-        color: #5ebdeb;
-        border: solid #5ebdeb 1px;
-        border-radius: 5px;
-        cursor: pointer;
+        margin-left: 20px;        
       }
-      #apply-filter:hover {
-        color: white;
-        background-color: #5ebdeb;      
+      #apply-filter:hover, .read-more:hover {
+        color: #5ebdeb;
+        background-color: white;    
       }
       #filters {
         background-color: white;
@@ -148,7 +155,7 @@
           <div class="affix col-md-6" id="filters">
             <!-- Price Filter -->
             <div class="row">
-              Price <div id="show-plow">${{minPrice}}</div> <input id="price" type="text" class="span2" value="" data-slider-id='priceSlider' data-slider-min="{{minPrice}}" data-slider-max="{{maxPrice}}" data-slider-step="50" data-slider-value="[{{minPrice}},{{maxPrice}}]"/><div id="show-phigh">${{maxPrice}}</div>
+              Price <div id="show-plow"></div> <input id="price" type="text" class="span2" value="" data-slider-id='priceSlider' data-slider-min="" data-slider-max="" data-slider-step="50" data-slider-value=""/><div id="show-phigh"></div>
             </div>
             <!-- /Price Filter -->
 
@@ -167,7 +174,7 @@
                   <li><a id="transit">Public Transit</a></li>
                 </ul>
               </div>
-              <input id="distance" data-slider-id='distSlider' type="text" data-slider-min="0" data-slider-max="{{maxDist}}" data-slider-step="1" data-slider-value="{{maxDist}}"/> <div id="show-dist">{{maxDist}} min</div>
+              <input id="distance" data-slider-id='distSlider' type="text" data-slider-min="0" data-slider-max="" data-slider-step="1" data-slider-value=""/> <div id="show-dist"></div>
             </div>
             <!-- /Distance Filter -->
 
@@ -213,19 +220,6 @@
         }, 
         function(start, end, label) {
         });
-      });
-    </script>
-
-    <!-- Slider plugin scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/bootstrap-slider.js">
-    </script>
-    <script type="text/javascript">
-      $("#price").slider().on('change',function(event){
-        $("#show-plow").text("$"+event.value.newValue[0]);
-        $("#show-phigh").text("$"+event.value.newValue[1]);
-      });
-      $("#distance").slider().on('change',function(event){
-        $("#show-dist").text(event.value.newValue+" min");
       });
     </script>
   </body>

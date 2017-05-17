@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html class="full" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Nesterly | {{title}}</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="stylesheets/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="stylesheets/bootstrap-custom.css" rel="stylesheet">
+
+    <!-- JQuery JS Library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <!-- Bootstrap JS Library -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- Custom styles -->
+    <style>
+      #apply-filter {
+        display: inline-block;
+        margin-left: 20px;
+        padding: 5px;
+        color: #5ebdeb;
+        border: solid #5ebdeb 1px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      #apply-filter:hover {
+        color: white;
+        background-color: #5ebdeb;      
+      }
+      .vertical-centerer {
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+      }
+    </style>  
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <a class="navbar-brand" href="index.html">
+            <img src="images\nesterly_logo_banner.jpg">
+          </a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="index.html">What is nesterly?</a>
+            </li>
+            <li>
+              <a href="host.html">Become a host</a>
+            </li>
+            <li>
+              <a href="signup.html">Sign up</a>
+            </li>
+          </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+      </div>
+      <!-- /.container -->
+    </nav>
+    <!-- /Navigation -->
+
+    <!-- Page Content -->
+    <div class="container">
+      <div id="centerWraper" class="col-md-6 col-md-offset-3">
+
+        <!-- Row for room images -->
+        <div class="row">
+          <div id="roomImages" class="carousel slide" data-ride="carousel">
+            <!-- Indicators -->
+            <ol class="carousel-indicators">
+            </ol>
+
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner">
+              {{#each roomImages}}
+                <div class="item">
+                  <img width="100%" src="{{this}}">
+                </div>                
+              {{/each}}
+            </div>
+
+            <!-- Left and right controls -->
+            <a class="left carousel-control" href="#roomImages" data-slide="prev">
+              <div class="vertical-centerer"></div>
+              <img width="50px" src="images/left-arrow.png">
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#roomImages" data-slide="next">
+              <div class="vertical-centerer"></div>
+              <img width="50px" src="images/right-arrow.png">
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+        </div>
+        <!-- /.row -->
+
+        <!-- Row for the listing information -->
+        <div class="row">
+          <!-- Column for the host info -->
+          <div class="col-md-3">
+            <div class="row" style="padding-top:10px;">
+              <img width="100%" src="{{hostImage}}" />
+            </div>
+
+            <div class="row">
+              <h3>Meet {{hostName}}!</h3>
+              <p>{{hostIntro}}</p>
+            </div>
+          </div>
+
+          <!-- Column for the room info -->
+          <div class="col-md-9">
+            <h1>{{title}}</h1>
+            <p><b>Price</b> &nbsp;&nbsp; ${{price}} per month</p>
+            <p>{{descLong}}</p>
+
+            <h2>Distances from MIT</h2>
+            <ul>
+              <li>Walking: {{walk}} min</li>
+              <li>Biking: {{bike}} min</li>
+              <li>Driving: {{drive}} min</li>
+              <li>Public transit: {{transit}} min</li>
+            </ul>
+
+            <h2>Shared Spaces</h2>
+            <ul>
+              {{#each shared}}
+                <li>{{this}}</li>
+              {{/each}}
+            </ul>
+
+            <h2>Bathrooms</h2>
+            <ul>
+              <li>Full bathroom: {{fullBath}}</li>
+              <li>Half bathroom: {{halfBath}}</li>
+            </ul>
+
+            <h2>Amenities</h2>
+            <ul>
+              {{#each amenities}}
+                <li>{{this}}</li>
+              {{/each}}
+            </ul>
+
+            <h2>House Rules</h2>
+            <p>{{houseRule}}</p>
+
+            <h2>About the neighborhood</h2>
+            <p>{{descLocale}}</p>
+          </div>
+        </div>
+        <!-- /.row -->
+
+      </div>
+    </div>
+    <!-- /Page Content -->
+
+    <script type="text/javascript">
+      $(document).ready(function(){
+        for (var i = 0; i < $('.carousel-inner .item').length; i++) {
+          $('<li data-target="#roomImages">').attr('data-slider-to',i).appendTo('#roomImages .carousel-indicators');
+        };
+        $('.carousel-indicators li').first().addClass('active');
+        $('.carousel-inner .item').first().addClass('active');
+      });
+    </script>
+  </body>
+</html> 

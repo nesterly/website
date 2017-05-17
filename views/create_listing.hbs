@@ -31,7 +31,7 @@
 		  background-color: #3498db;
 		  color: white;
 		}
-		textarea, #title-input, #address-input, #image-url-input {
+		textarea, #title-input, #address-input, #host-input {
 			width: 70%;
 			vertical-align: top;
 		}
@@ -39,8 +39,8 @@
       margin-left: 29%;
     }
     #preview {
-      height: 300px;
-      width: 400px;
+      height: 200px;
+      width: 300px;
       border: solid #4da6ff 1px;
     }
 		#submit-button {
@@ -64,7 +64,7 @@
       max-width: 100%; /* This rule is very important, please do not ignore this! */
     }
     #wrapper {
-      width: 400px;
+      width: 300px;
     }
     #crop-upload {
       text-align: center;
@@ -98,6 +98,10 @@
 
     <div class="form-title">Title: </div>
     <input id="title-input" type="text" name="title" placeholder="Enter a title.">
+    <br><br>
+
+    <div class="form-title">Host ID: </div>
+    <input id="host-input" type="text" name="host" placeholder="Enter the host's user ID.">
     <br><br>
 
     <div class="form-title">Brief Description: </div>
@@ -166,7 +170,7 @@
       <div id="crop-upload">
         Crop and Upload
       </div>
-      <img id="preview" src="images/preview.png">
+      <img id="preview" src="images/room-preview.jpg">
     </div>
     <input type="hidden" id="image-url-input" name="image_url" value="/images/crop-default.png">
     <br><br>     
@@ -299,7 +303,7 @@
   <script type="text/javascript">
     $(document).ready(function() {
       $('#image').cropper({
-        aspectRatio: 4 / 3,
+        aspectRatio: 3 / 2,
       });
 
       $("#file-input").on('change',function() {
@@ -316,7 +320,7 @@
       });
 
       $('#crop-upload').on('click',function(){
-        var croppedImgURI = $('#image').cropper('getCroppedCanvas', {width: 800,}).toDataURL('image/jpeg');
+        var croppedImgURI = $('#image').cropper('getCroppedCanvas', {width: 900,}).toDataURL('image/jpeg');
         var croppedImgFile = dataURItoBlob(croppedImgURI);
         getSignedRequest(croppedImgFile);
       });

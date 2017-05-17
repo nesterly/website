@@ -1,18 +1,52 @@
 $(document).ready(function(){
 
+  var maxWalk = null;
+  var maxBike = null;
+  var maxDrive = null;
+  var maxTransit = null;
+  var maxPrice = null;
+  var minPrice = Infinity;
+
   var listingSummaries;
+
   $.getJSON("/listings_info",function(data){
-    listingSummaries = data.summaries;
     var listings = [];
-    for (var summary of listingSummaries) {
+    for (var summary of data) {
       listings.push(summary.id);
+      maxWalk = Math.max(maxWalk,summary.walk);
+      maxBike = Math.max(maxBike,summary.bike);
+      maxDrive = Math.max(maxDrive,summary.drive);
+      maxTransit = Math.max(maxTransit,summary.transit);
+      maxPrice = Math.max(maxPrice,summary.price);
+      minPrice = Math.min(minPrice,summary.price);
       var wrapper = $('<div class="col-md-6 img-portfolio">').attr('id',summary.id);
       $('<img class="img-responsive img-hover">').attr('src',summary.imageUrl).appendTo(wrapper);
       $('<h3>').text(summary.title).appendTo(wrapper);
       $('<p>').text(summary.descShort).appendTo(wrapper);
+      $('<div class="read-more">').text("Learn more about this home").attr('rel',summary.id).appendTo(wrapper);
       wrapper.appendTo('#listings'); 
     };
+
     updateMap(listings);
+
+    $('.read-more').on('click',function(event){
+      window.open('/show_listing'+$(this).attr('rel'));
+    })
+
+    $('#price').attr('data-slider-max',maxPrice).attr('data-slider-min',minPrice)
+      .attr('data-slider-value',"["+minPrice+","+maxPrice+"]");
+    $("#price").slider().on('change',function(event){
+      $("#show-plow").text("$"+event.value.newValue[0]);
+      $("#show-phigh").text("$"+event.value.newValue[1]);
+    });
+    $('#distance').attr('data-slider-max',maxWalk).attr('data-slider-value',maxWalk);
+    $("#distance").slider().on('change',function(event){
+      $("#show-dist").text(event.value.newValue+" min");
+    });
+
+    $('#show-dist').text(maxWalk+' min');
+    $('#show-phigh').text('$'+maxPrice);
+    $('#show-plow').text('$'+minPrice);
   });
 
   $("#transportation li a").on('click',function(event){
@@ -51,7 +85,7 @@ $(document).ready(function(){
       }
     }
     $(".img-portfolio").removeClass("listing-selected");
-    map.removeLayer(homePoints);
+    removeHomes();
     updateMap(visibleListings);
   }
 

@@ -73,6 +73,150 @@ router.get('/create_listing', function(req, res, next) {
   res.render('create_listing');
 });
 
+/* GET listings page. */
+router.get('/listings',function(req, res, next) {
+	res.render('listings');
+});
+
+/* GET listing details page. */
+router.get('/show_listing:listing_id',function(req,res,next) {
+
+	var listingID = req.params.listing_id;
+
+	database.ref("/listings/").orderByKey().equalTo(listingID).once("value").then(function(snapshot) {
+		var listings = snapshot.val();
+		var listingInfo = listings[listingID];
+
+		var sharedSpaces = [];
+		var defaultShared = {
+			"living_room": "Living room",
+			"kitchen": "Kitchen",
+			"study": "Study"
+		};
+		for (var space of listingInfo.shared){
+			if (defaultShared.hasOwnProperty(space)) {
+				sharedSpaces.push(defaultShared[space]);
+			} else {
+				space = space.substring(0,1).toUpperCase() + space.substring(1);
+				sharedSpaces.push(space);
+			}			
+		}
+
+		var amenities = [];
+		var defaultAmenities = {
+			"tv": "TV",
+			"wifi": "Wifi",
+			"washer_dryer": "Washer and dryer",
+			"storage": "Storage",
+			"dishwasher": "Dishwasher",
+			"yard": "Yard",
+			"deck_patio": "Deck/Patio",
+			"separate_entrance": "Separate entrance",
+			"workout_equipment": "Workout equipment",
+			"n/a": "N/A"
+		};
+
+		for (var amenity of listingInfo.amenities) {
+			if (defaultAmenities.hasOwnProperty(amenity)) {
+				amenities.push(defaultAmenities[amenity]);
+			} else {
+				amenity = amenity.substring(0,1).toUpperCase() + amenity.substring(1);
+				amenities.push(amenity);
+			}
+		}
+
+  	var fullBath = "n/a", halfBath = "n/a";
+  	if (listingInfo.privFullBath !== '0') {
+  		fullBath = "private";
+  	} else if (listingInfo.shareFullBath !== '0') {
+  		fullBath = "shared";
+  	}
+  	if (listingInfo.privHalfBath !== '0') {
+  		halfBath = "private";
+  	} else if (listingInfo.shareHalfBath !== '0') {
+  		halfBath = 'shared';
+  	}
+
+		var listingDetails = {
+			roomImages: [listingInfo.imageUrl],
+			title: listingInfo.title,
+			price: listingInfo.price,
+			descLong: listingInfo.descLong,
+			walk: listingInfo.walk,
+			bike: listingInfo.bike,
+			drive: listingInfo.drive,
+			transit: listingInfo.transit,
+			shared: sharedSpaces,
+			fullBath: fullBath,
+			halfBath: halfBath,
+			amenities: amenities,
+			houseRule: listingInfo.houseRule,
+			descLocale: listingInfo.descLocale,
+		};
+
+		var hostID = listingInfo.host;
+		database.ref("/hosts/").orderByKey().equalTo(hostID).once("value").then(function(snapshot) {
+			var hosts = snapshot.val();
+			var hostInfo = hosts[hostID];
+
+			listingDetails.hostName = hostInfo.firstName;
+			listingDetails.hostIntro = hostInfo.selfIntro;
+			listingDetails.hostImage = hostInfo.imageUrl;
+
+			res.render('listing_details',listingDetails);
+		});
+	});
+});
+
+/* GET API for listings */
+router.get('/listings_info',function(req, res, next) {
+	var ref = database.ref("/listings/");
+	ref.once('value').then(function(snapshot) {
+		var listings = snapshot.val();
+		var listingsInfo = [];
+		for (var key of Object.keys(listings)) {
+			info = listings[key];
+			summary = {
+				id: key,
+				title: info.title,
+				descShort: info.descShort,
+				walk: info.walk,
+				bike: info.bike,
+				drive: info.drive,
+				transit: info.transit,
+				price: info.price,
+				imageUrl: info.imageUrl,
+				stayMin: info.stayMin,
+				stayMax: info.stayMax,
+			};
+			listingsInfo.push(summary);
+		}
+		res.json(listingsInfo);
+	});
+});
+
+/* GET geoJSON API for listings map */
+router.get('/listings_geo',function(req, res, next) {
+	var ref = database.ref("/listings/");
+	ref.once("value").then(function(snapshot) {
+		var listings = snapshot.val();
+		var listingKeys = Object.keys(listings);
+		var features = [];
+		for (var key of listingKeys) {
+			info = listings[key];
+			feature = {
+				"type":"Feature",
+				"properties":{"id":key,"name":info.title},
+				"geometry":{"type":"Point","coordinates":[info.long,info.lat]}
+			};
+			features.push(feature);
+		}
+		geo = {"type":"FeatureCollection","features":features};
+		res.json(geo);
+	});
+});
+
+/* GET signed URL for uploading image to S3 */
 router.get('/sign-s3', (req, res) => {
   var s3 = new aws.S3({accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY});
   var fileType = req.query['file-type'];
@@ -184,7 +328,7 @@ router.post('/create_host_account', function(req, res, next) {
 				if (languageOther !== -1) {
 					language[languageOther] = req.body.language_other;
 				}
-			}
+			};
 
 	    var newHost = {
 	    	firstName: req.body.first_name,
@@ -210,7 +354,7 @@ router.post('/create_host_account', function(req, res, next) {
 				selfIntro: req.body.self_intro,
 				dealBreakers: req.body.deal_breakers,
 				petPeeves: req.body.pet_peeves,
-			}
+			};
 
 			addHost(userRecord.uid, newHost);
 		  res.redirect('sign_in');
@@ -259,8 +403,11 @@ router.post('/add_listing', function(req, res, next) {
 	
 	var furniture = req.body.furniture;
 	if (!furniture) {
-		furniture = [];
+		furniture = ["n/a"];
 	} else {
+		if (typeof(furniture) === "string") {
+			furniture = [furniture];
+		}
 		var furnitureOther = furniture.indexOf("other");
 		if (furnitureOther !== -1) {
 			furniture[furnitureOther] = req.body.furniture_other;
@@ -269,8 +416,11 @@ router.post('/add_listing', function(req, res, next) {
 
 	var amenities = req.body.amenities;
 	if (!amenities) {
-		amenities = [];
+		amenities = ["n/a"];
 	} else {
+		if (typeof(amenities) === "string") {
+			amenities = [amenities];
+		}
 		var amenitiesOther = amenities.indexOf("other");
 		if (amenitiesOther !== -1) {
 			amenities[amenitiesOther] = req.body.amenities_other;
@@ -279,8 +429,11 @@ router.post('/add_listing', function(req, res, next) {
 
 	var shared = req.body.shared;
 	if (!shared) {
-		shared = [];
+		shared = ["n/a"];
 	} else {
+		if (typeof(shared) === "string") {
+			shared = [shared];
+		}
 		var sharedOther = shared.indexOf("other");
 		if (sharedOther !== -1) {
 			shared[sharedOther] = req.body.shared_other;
@@ -289,6 +442,7 @@ router.post('/add_listing', function(req, res, next) {
 	
 	var newListing = {
     title: req.body.title,
+    host: req.body.host,
    	descShort: req.body.desc_short,
     descLong: req.body.desc_long,
     bldgType: bldgType,
@@ -323,117 +477,6 @@ router.post('/add_listing', function(req, res, next) {
   res.redirect('listings');
 });
 
-/* GET listings page. */
-router.get('/listings',function(req, res, next) {
-	var ref = database.ref("/listings/");
-	ref.once('value').then(function(snapshot) {
-		var listings = snapshot.val();
-		var listingKeys = Object.keys(listings);
-		var walks = [];
-		var bikes = [];
-		var drives = [];
-		var transits = [];
-		var prices = [];
-		for (var key of listingKeys) {
-			info = listings[key];
-			walks.push(info.walk);
-			bikes.push(info.bike);
-			drives.push(info.drive);
-			transits.push(info.transit);
-			prices.push(info.price);
-		}
-		var maxWalk = Math.max.apply(null,walks);
-		var maxBike = Math.max.apply(null,bikes);
-		var maxDrive = Math.max.apply(null,drives);
-		var maxTransit = Math.max.apply(null,transits);
-		var minPrice = Math.min.apply(null,prices);
-		var maxPrice = Math.max.apply(null,prices);
-		res.render('listings',{
-			maxWalk: maxWalk,
-			maxBike: maxBike,
-			maxDrive: maxDrive,
-			maxTransit: maxTransit,
-			maxDist: Math.max.apply(null,[maxWalk,maxBike,maxDrive,maxTransit]),
-			minPrice: minPrice,
-			maxPrice: maxPrice,
-		});
-	});
-});
-
-/* GET API for listings */
-router.get('/listings_info',function(req, res, next) {
-	var ref = database.ref("/listings/");
-	ref.once('value').then(function(snapshot) {
-		var listings = snapshot.val();
-		var listingKeys = Object.keys(listings);
-		var summaries = [];
-		var walks = [];
-		var bikes = [];
-		var drives = [];
-		var transits = [];
-		var prices = [];
-		for (var key of listingKeys) {
-			info = listings[key];
-			summary = {
-				id: key,
-				title: info.title,
-				descShort: info.descShort,
-				walk: info.walk,
-				bike: info.bike,
-				drive: info.drive,
-				transit: info.transit,
-				price: info.price,
-				imageUrl: info.imageUrl,
-				stayMin: info.stayMin,
-				stayMax: info.stayMax,
-			};
-			summaries.push(summary);
-			walks.push(info.walk);
-			bikes.push(info.bike);
-			drives.push(info.drive);
-			transits.push(info.transit);
-			prices.push(info.price);
-		}
-		var maxWalk = Math.max.apply(null,walks);
-		var maxBike = Math.max.apply(null,bikes);
-		var maxDrive = Math.max.apply(null,drives);
-		var maxTransit = Math.max.apply(null,transits);
-		var minPrice = Math.min.apply(null,prices);
-		var maxPrice = Math.max.apply(null,prices);
-		var listingsInfo = {
-			summaries: summaries,
-			maxWalk: maxWalk,
-			maxBike: maxBike,
-			maxDrive: maxDrive,
-			maxTransit: maxTransit,
-			maxDist: Math.max.apply(null,[maxWalk,maxBike,maxDrive,maxTransit]),
-			minPrice: minPrice,
-			maxPrice: maxPrice,
-		};
-		res.json(listingsInfo);
-	});
-});
-
-/* GET geoJSON API for listings map */
-router.get('/listings_geo',function(req, res, next) {
-	var ref = database.ref("/listings/");
-	ref.once("value").then(function(snapshot) {
-		var listings = snapshot.val();
-		var listingKeys = Object.keys(listings);
-		var features = [];
-		for (var key of listingKeys) {
-			info = listings[key];
-			feature = {
-				"type":"Feature",
-				"properties":{"id":key,"name":info.title},
-				"geometry":{"type":"Point","coordinates":[info.long,info.lat]}
-			};
-			features.push(feature);
-		}
-		geo = {"type":"FeatureCollection","features":features};
-		res.json(geo);
-	});
-});
 
 /////////////////////////////////////////////////////////////////////////////////////
 // Helper functions
