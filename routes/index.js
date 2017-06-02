@@ -28,7 +28,8 @@ if (process.env.NODE_ENV) { // Running on production server
 
   firebaseAdmin.initializeApp({
 	  credential: firebaseAdmin.credential.cert({
-	    "private_key": process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+	    "private_key": process.env.FIREBASE_PRIVATE_KEY,
+	    "private_key_id": process.env.FIREBASE_PRIVATE_KEY_ID,
 	    "client_email": process.env.FIREBASE_CLIENT_EMAIL
 	  }),
 	  databaseURL: "https://nesterly-website.firebaseio.com"
