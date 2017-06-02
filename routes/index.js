@@ -26,13 +26,13 @@ if (process.env.NODE_ENV) { // Running on production server
 	  messagingSenderId: config.firebaseMessagingSenderId
 	};
 
-  firebaseAdmin.initializeApp({
-	  credential: admin.credential.cert({
-	    "private_key": process.env.FIREBASE_PRIVATE_KEY,
-	    "client_email": process.env.FIREBASE_CLIENT_EMAIL
-	  }),
-	  databaseURL: "https://nesterly-website.firebaseio.com"
-	});
+ //  firebaseAdmin.initializeApp({
+	//   credential: admin.credential.cert({
+	//     "private_key": process.env.FIREBASE_PRIVATE_KEY,
+	//     "client_email": process.env.FIREBASE_CLIENT_EMAIL
+	//   }),
+	//   databaseURL: "https://nesterly-website.firebaseio.com"
+	// });
 
 	AWS_ACCESS_KEY_ID = config.AWS_ACCESS_KEY_ID;
 	AWS_SECRET_ACCESS_KEY = config.AWS_SECRET_ACCESS_KEY;
