@@ -1,15 +1,23 @@
+/* Creates an Express router for our server */
 var express = require('express');
 var router = express.Router();
 
+
+/////////////////////////////////////////////////////////////////////////////////////
+// Setting up dependencies and configurations.
+/////////////////////////////////////////////////////////////////////////////////////
+
+/* Reference dependencies for Firebase and AWS */
 var firebase = require("firebase");
 var firebaseAdmin = require("firebase-admin");
-var firebaseConfig;
-
 var aws = require('aws-sdk');
-var S3_BUCKET;
 
-if (process.env.NODE_ENV) {
-	var config = process.env;
+var firebaseConfig; // Will hold configuration for Firebase
+var S3_BUCKET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY; // Will hold configurations for AWS
+
+/* Set up the configuration for Firebase and AWS */
+if (process.env.NODE_ENV) { // Running on production server
+	var config = process.env; // Configureation is stored on process environment
 	firebaseConfig = {
 	  apiKey: config.firebaseApiKey,
 	  authDomain: config.firebaseAuthDomain,
@@ -17,11 +25,21 @@ if (process.env.NODE_ENV) {
 	  storageBucket: config.firebaseStorageBucket,
 	  messagingSenderId: config.firebaseMessagingSenderId
 	};
+
+  firebaseAdmin.initializeApp({
+	  credential: admin.credential.cert({
+	    "private_key": process.env.FIREBASE_PRIVATE_KEY,
+	    "client_email": process.env.FIREBASE_CLIENT_EMAIL
+	  }),
+	  databaseURL: "https://nesterly-website.firebaseio.com"
+	});
+
 	AWS_ACCESS_KEY_ID = config.AWS_ACCESS_KEY_ID;
 	AWS_SECRET_ACCESS_KEY = config.AWS_SECRET_ACCESS_KEY;
 	S3_BUCKET = config.S3_BUCKET;
-} else {
-	var config = require('../config')['development'];
+
+} else { // Running on local machine
+	var config = require('../config')['development']; // Configureation is stored on local config file
 	firebaseConfig = {
 	  apiKey: config.firebase.apiKey,
 	  authDomain: config.firebase.authDomain,
@@ -30,55 +48,61 @@ if (process.env.NODE_ENV) {
 	  messagingSenderId: config.firebase.messagingSenderId
 	};
 
-	AWS_ACCESS_KEY_ID = config.s3.AWS_ACCESS_KEY_ID;
-	AWS_SECRET_ACCESS_KEY = config.s3.AWS_SECRET_ACCESS_KEY;
-	S3_BUCKET = config.s3.S3_BUCKET;
-
 	var serviceAccount = require("../serviceAccountKey.json");
 	firebaseAdmin.initializeApp({
 	  credential: firebaseAdmin.credential.cert(serviceAccount),
 	  databaseURL: "https://nesterly-website.firebaseio.com"
 	});
+
+	AWS_ACCESS_KEY_ID = config.s3.AWS_ACCESS_KEY_ID;
+	AWS_SECRET_ACCESS_KEY = config.s3.AWS_SECRET_ACCESS_KEY;
+	S3_BUCKET = config.s3.S3_BUCKET;
 }
 
+/* Connect to Firebase with our configuration */
 firebase.initializeApp(firebaseConfig);
-var database = firebase.database();
+
+var database = firebase.database(); // Reference to our Firebase database 
+
 
 /////////////////////////////////////////////////////////////////////////////////////
 // Handle GET requests for rendering pages, signing S3 URL, etc.
 /////////////////////////////////////////////////////////////////////////////////////
 
-/* GET home page. */
+/* Display home page. */
 router.get('/', function(req, res, next) {
   res.render('home');
 });
 
-/* GET student sign up page. */
+/* Display student sign up page. */
 router.get('/student_signup', function(req, res, next) {
 	res.render('student_signup');
 });
 
-/* GET host sign up page. */
+/* Display host sign up page. */
 router.get('/host_signup', function(req, res, next) {
 	res.render('host_signup');
 });
 
-/* GET sign in page. */
+/* Display sign in page. */
 router.get('/sign_in', function(req, res, next) {
 	res.render('sign_in');
 });
 
-/* GET listing creation page. */
+/* Display listing creation page. */
 router.get('/create_listing', function(req, res, next) {
   res.render('create_listing');
 });
 
-/* GET listings page. */
+/* Display listings page. */
 router.get('/listings',function(req, res, next) {
 	res.render('listings');
 });
 
-/* GET listing details page. */
+/* 
+	Display listing details page. Listing is identified by ID. 
+	For example, "/show_listing1234" will display the listing with ID "1234".
+*/
 router.get('/show_listing:listing_id',function(req,res,next) {
 
 	var listingID = req.params.listing_id;
@@ -168,7 +192,10 @@ router.get('/show_listing:listing_id',function(req,res,next) {
 	});
 });
 
-/* GET API for listings */
+/* 
+	API for listings. 
+	This API is used by "/listings" page to get all listings to display.
+*/
 router.get('/listings_info',function(req, res, next) {
 	var ref = database.ref("/listings/");
 	ref.once('value').then(function(snapshot) {
@@ -195,7 +222,10 @@ router.get('/listings_info',function(req, res, next) {
 	});
 });
 
-/* GET geoJSON API for listings map */
+/* 
+	API for geoJSON of listings. 
+	This API is used by "/listings" page to display listings on the map.
+*/
 router.get('/listings_geo',function(req, res, next) {
 	var ref = database.ref("/listings/");
 	ref.once("value").then(function(snapshot) {
@@ -216,11 +246,12 @@ router.get('/listings_geo',function(req, res, next) {
 	});
 });
 
-/* GET signed URL for uploading image to S3 */
+/* Respond with a signed URL for uploading image to S3 */
 router.get('/sign-s3', (req, res) => {
   var s3 = new aws.S3({accessKeyId: AWS_ACCESS_KEY_ID, secretAccessKey: AWS_SECRET_ACCESS_KEY});
   var fileType = req.query['file-type'];
-  var userID = "nesterly-admin";
+
+  var userID = "nesterly-admin"; // Change this to the logged-in user's ID
   var timestamp = new Date().getTime();
   var suffix = Math.floor(Math.random()*400); 
   var fileName = userID+"-"+timestamp+"-"+suffix;
@@ -245,6 +276,7 @@ router.get('/sign-s3', (req, res) => {
     res.end();
   });
 });
+
 
 /////////////////////////////////////////////////////////////////////////////////////
 // Handle POST requests for creating user accounts, listings, etc.
