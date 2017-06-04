@@ -292,7 +292,6 @@ router.get('/sign-s3', (req, res) => {
 
 /* POST create student account. */
 router.post('/create_student_account', function(req, res, next) {
-	res.send(process.env.FIREBASE_CLIENT_ID);
 	firebaseAdmin.auth().createUser({
 	  email: req.body.email + "@mit.edu",
 	  emailVerified: false,
@@ -301,6 +300,8 @@ router.post('/create_student_account', function(req, res, next) {
 	  disabled: false
 	})
 	  .then(function(userRecord) {
+
+	  	res.send(userRecord);
 
 	    var language = req.body.language;
 			if (!language) {
