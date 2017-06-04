@@ -29,7 +29,7 @@ if (process.env.NODE_ENV) { // Running on production server
 	serviceAccount = { 
 	  projectId: "nesterly-website",
     clientEmail: config.FIREBASE_CLIENT_EMAIL,
-    privateKey: config.FIREBASE_PRIVATE_KEY
+    privateKey: config.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
 	};
 
 	AWS_ACCESS_KEY_ID = config.AWS_ACCESS_KEY_ID;
@@ -282,7 +282,7 @@ router.get('/sign-s3', (req, res) => {
 
 /* POST create student account. */
 router.post('/create_student_account', function(req, res, next) {
-	res.send(process.env.FIREBASE_PRIVATE_KEY);
+	res.send(process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'));
 	firebaseAdmin.auth().createUser({
 	  email: req.body.email + "@mit.edu",
 	  emailVerified: false,
