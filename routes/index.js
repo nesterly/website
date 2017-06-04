@@ -12,7 +12,7 @@ var firebase = require("firebase");
 var firebaseAdmin = require("firebase-admin");
 var aws = require('aws-sdk');
 
-var firebaseConfig; // Will hold configuration for Firebase
+var firebaseConfig, serviceAccount; // Will hold configurations for Firebase
 var S3_BUCKET, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY; // Will hold configurations for AWS
 
 /* Set up the configuration for Firebase and AWS */
@@ -26,21 +26,18 @@ if (process.env.NODE_ENV) { // Running on production server
 	  messagingSenderId: config.firebaseMessagingSenderId
 	};
 
-  firebaseAdmin.initializeApp({
-	  credential: firebaseAdmin.credential.cert({
-		  "type": "service_account",
-		  "project_id": "nesterly-website",
-	    "private_key": process.env.FIREBASE_PRIVATE_KEY,
-	    "private_key_id": process.env.FIREBASE_PRIVATE_KEY_ID,
-	    "client_email": process.env.FIREBASE_CLIENT_EMAIL,
-		  "client_id": process.env.FIREBASE_CLIENT_ID,
-		  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-		  "token_uri": "https://accounts.google.com/o/oauth2/token",
-		  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-		  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-xxz3e%40nesterly-website.iam.gserviceaccount.com"
-	  }),
-	  databaseURL: "https://nesterly-website.firebaseio.com"
-	});
+	serviceAccount = { 
+		type: "service_account",
+	  project_id: "nesterly-website",
+    private_key: process.env.FIREBASE_PRIVATE_KEY,
+    private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+    client_email: process.env.FIREBASE_CLIENT_EMAIL,
+	  client_id: process.env.FIREBASE_CLIENT_ID,
+	  auth_uri: "https://accounts.google.com/o/oauth2/auth",
+	  token_uri: "https://accounts.google.com/o/oauth2/token",
+	  auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+	  client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-xxz3e%40nesterly-website.iam.gserviceaccount.com"
+  };
 
 	AWS_ACCESS_KEY_ID = config.AWS_ACCESS_KEY_ID;
 	AWS_SECRET_ACCESS_KEY = config.AWS_SECRET_ACCESS_KEY;
@@ -56,11 +53,7 @@ if (process.env.NODE_ENV) { // Running on production server
 	  messagingSenderId: config.firebase.messagingSenderId
 	};
 
-	var serviceAccount = require("../serviceAccountKey.json");
-	firebaseAdmin.initializeApp({
-	  credential: firebaseAdmin.credential.cert(serviceAccount),
-	  databaseURL: "https://nesterly-website.firebaseio.com"
-	});
+	serviceAccount = require("../serviceAccountKey.json");
 
 	AWS_ACCESS_KEY_ID = config.s3.AWS_ACCESS_KEY_ID;
 	AWS_SECRET_ACCESS_KEY = config.s3.AWS_SECRET_ACCESS_KEY;
@@ -69,6 +62,10 @@ if (process.env.NODE_ENV) { // Running on production server
 
 /* Connect to Firebase with our configuration */
 firebase.initializeApp(firebaseConfig);
+firebaseAdmin.initializeApp({
+  credential: firebaseAdmin.credential.cert(serviceAccount),
+  databaseURL: "https://nesterly-website.firebaseio.com"
+});
 
 var database = firebase.database(); // Reference to our Firebase database 
 
@@ -300,8 +297,6 @@ router.post('/create_student_account', function(req, res, next) {
 	  disabled: false
 	})
 	  .then(function(userRecord) {
-
-	  	res.send(userRecord);
 
 	    var language = req.body.language;
 			if (!language) {
