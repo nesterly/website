@@ -516,22 +516,22 @@ router.post('/add_listing', function(req, res, next) {
 function addGuest(userID, guestData) {
   var updates = {};
   updates['/guests/' + userID] = guestData;
-  return firebase.database().ref().update(updates);
+  return database.ref().update(updates);
 }
 
 /* Add new host to firebase DB. */
 function addHost(userID, hostData) {
   var updates = {};
   updates['/hosts/' + userID] = hostData;
-  return firebase.database().ref().update(updates);
+  return database.ref().update(updates);
 }
 
 /* Add new listing to firebase DB. */
 function addListing(listingData) {
-  var newListingKey = firebase.database().ref().child('listings').push().key;
+  var newListingKey = database.ref().child('listings').push().key;
   var updates = {};
   updates['/listings/' + newListingKey] = listingData;
-  return firebase.database().ref().update(updates);
+  return database.ref().update(updates);
 }
 
 module.exports = router;
