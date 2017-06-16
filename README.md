@@ -198,13 +198,13 @@ Handlebars (hbs) files are pretty much the same as html files, except for the re
 ### Suggestions and TODOs
 
 - Filter by date (listings page)
--- Allow empty (unselected) date range
--- Maybe find another date range picker plugin that works better for our UI?
+  - Allow empty (unselected) date range
+  - Maybe find another date range picker plugin that works better for our UI?
 
 - Add click event to the listing images (listings page)
--- Click event on image -> Check the listing ID -> Pop up the corresponding listing on the map
+  - Click event on image -> Check the listing ID -> Pop up the corresponding listing on the map
 
 - Distance filter (listings page)
--- Change the upper limit distance based on mode of transportation
--- You could create a distance filter for each mode of transportation and hide ones that are not selected in the dropdown
+  - Change the upper limit distance based on mode of transportation
+  - You could create a distance filter for each mode of transportation and hide ones that are not selected in the dropdown
 
